@@ -31,7 +31,7 @@ pub async fn mgr_get_status(
   let data = data.unwrap();
   let data = data.get(0).unwrap().clone();
   let (rslt, stat) = super::super::pkt::get_yesung_stat(data);
-  log::debug!("[데몬] addr {} flags {}", addr, super::super::pkt::parse(data).join(","));
+  log::debug!("[데몬] addr {} flags {}", read_addr, super::super::pkt::parse(data).join(","));
 
   (rslt, stat, "[데몬]".to_owned())
 }

@@ -13,16 +13,16 @@ pub async fn do_cmd_stat(
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
-  let addr = super::super::util::get_gate_addr(&model.gate_no);
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
 
-  let (rslt, stat, msg) = super::get_status(ctx, addr, modbus, cmd, true).await;
+  let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, true).await;
   if rslt == GateCmdRsltType::Fail {
     // 실패의 경우에는 안에서 처리함.
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 
   // 성공.
-  log::info!("[yesung] Stat rslt {rslt} stat {stat} msg {msg} addr {addr}");
+  log::info!("[yesung] Stat rslt {rslt} stat {stat} msg {msg} addr {read_addr}");
   send_cmd_res_changed(&ctx, model, &cmd, rslt, stat, msg.clone()).await;
   Ok(DoGateCmdRslt::Success)
 }

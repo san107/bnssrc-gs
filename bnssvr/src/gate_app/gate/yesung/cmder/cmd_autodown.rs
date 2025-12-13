@@ -27,8 +27,7 @@ pub async fn do_cmd_autodown(
   let modbuscmd = pkt::get_yesung_down_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let addr = super::super::util::get_gate_addr(&model.gate_no);
-
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
   let write_addr = super::super::util::get_write_addr(&model.gate_no);
 
   let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
@@ -81,7 +80,7 @@ pub async fn do_cmd_autodown(
   let rlt = loop {
     interval.tick().await;
     log::debug!("[yesung] start loop body {} {} {}", cmd.cmd_type, cmd.gate_seq, model.gate_nm);
-    let (rslt, stat, msg) = super::get_status(ctx, addr, modbus, cmd, false).await;
+    let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
     if rslt == GateCmdRsltType::Fail {
       let msg = format!(
         "[yesung] Fail {rslt} stat {stat} msg {msg}{cmdmsg} elapsed {} secs",

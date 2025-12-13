@@ -30,9 +30,9 @@ pub async fn do_cmd_down(
   let modbuscmd = pkt::get_yesung_down_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let addr = super::super::util::get_gate_addr(&model.gate_no);
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
   let write_addr = super::super::util::get_write_addr(&model.gate_no);
-  log::debug!("[yesung] addr is {addr} cmd {modbuscmd:?}");
+  log::debug!("[yesung] addr is {read_addr} cmd {modbuscmd:?}");
 
   let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
   if let Err(e) = rslt {
@@ -74,7 +74,7 @@ pub async fn do_cmd_down(
   let rlt = loop {
     interval.tick().await;
     log::debug!("[yesung] start loop body");
-    let (rslt, stat, msg) = super::get_status(ctx, addr, modbus, cmd, false).await;
+    let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
     if rslt == GateCmdRsltType::Fail {
       send_cmd_res_changed(&ctx, model, &cmd, rslt, stat, msg.clone()).await;
       let msg = format!(

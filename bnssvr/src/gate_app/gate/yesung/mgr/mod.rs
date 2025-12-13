@@ -32,12 +32,9 @@ pub async fn mgr_get_status(ctx: GateCtx, model: tb_gate::Model) {
   //let addr = super::util::get_gate_addr(&model.gate_no);
   //let data = gate::sock::do_read_input_registers(&mut modbus, addr, 1).await;
 
-  let read_addr = super::super::util::get_read_addr(&model.gate_no);
+  let read_addr = super::util::get_read_addr(&model.gate_no);
+
   let data = gate::sock::do_read_input_registers(modbus, read_addr, 1).await;
-
-  let write_addr = super::super::util::get_write_addr(&model.gate_no);
-  gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
-
   if let Err(e) = data {
     let msg = format!("[데몬] read_holding_registers fail {e:?}");
     log::error!("{msg}");
@@ -55,7 +52,7 @@ pub async fn mgr_get_status(ctx: GateCtx, model: tb_gate::Model) {
   debug!("[데몬] read data is {:?} {}", data, vec_to_hex_u16(&data));
   if data.len() > 0 {
     log::debug!(
-      "[데몬] addr {addr} {}",
+      "[데몬] addr {read_addr} {}",
       super::pkt::parse(data.get(0).unwrap().clone()).join(",")
     );
   }

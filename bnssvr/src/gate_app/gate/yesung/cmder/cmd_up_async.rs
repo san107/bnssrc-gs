@@ -22,11 +22,11 @@ pub async fn do_cmd_up_async(
   let modbuscmd = pkt::get_yesung_up_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let addr = super::super::util::get_gate_addr(&model.gate_no);
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
   let write_addr = super::super::util::get_write_addr(&model.gate_no);
-  log::debug!("[yesung] addr is {addr}");
+  log::debug!("[yesung] addr is {read_addr}");
 
-  let (rslt, stat, msg) = super::get_status(ctx, addr, modbus, cmd, false).await;
+  let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
 
   if let GateCmdRsltType::Fail = rslt {
     log::error!("status fail {msg}");

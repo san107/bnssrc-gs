@@ -25,9 +25,9 @@ pub async fn do_cmd_up(
   let modbuscmd = pkt::get_yesung_up_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let addr = super::super::util::get_gate_addr(&model.gate_no);
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
   let write_addr = super::super::util::get_write_addr(&model.gate_no);
-  log::debug!("[yesung] addr is {addr}");
+  log::debug!("[yesung] addr is {read_addr}");
 
   let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
   if let Err(e) = rslt {
@@ -60,7 +60,7 @@ pub async fn do_cmd_up(
   let rlt = loop {
     interval.tick().await;
     log::debug!("[yesung] start loop body");
-    let (rslt, stat, msg) = super::get_status(ctx, addr, modbus, cmd, false).await;
+    let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
     if rslt == GateCmdRsltType::Fail {
       // 실패의 경우에는 안에서 처리함.
       let msg = format!(
