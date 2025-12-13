@@ -1,0 +1,70 @@
+// 화면 너비가 900px 이하일 때
+@media screen and (max-width: 900px) {
+  .full-overlay .overlay-close {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .alarm-header {
+    font-size: 30px !important;
+  }
+  .alarm-header .icon {
+    transform: scale(0.8);
+  }
+  .form-sms-container {
+    width: 100% !important;
+    // opacity: 0;
+    display: none;
+    left: 0px !important;
+  }
+  .form-sms-container.show {
+    // opacity: 1;
+    display: block;
+  }
+  .msg-list-container {
+    width: 100% !important;
+    // opacity: 0;
+    display: none;
+    left: 0px !important;
+  }
+  .msg-list-container.show {
+    // opacity: 1;
+    display: block;
+  }
+  // 모바일에서 close 버튼을 왼쪽으로 이동
+  .icon-small-close {
+    left: 10px !important;
+    right: auto !important;
+    color: #fff !important;
+  }
+}
+
+// 화면 너비가 600px 이하일 때
+@media screen and (max-width: 600px) {
+  .full-overlay .overlay-close {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  .alarm-header {
+    font-size: 20px !important;
+    padding: 50px 0 20px 0 !important;
+  }
+  .alarm-header .icon {
+    transform: scale(0.6);
+    margin-right: 0 !important;
+  }
+  .alarm-info-title {
+    font-size: 20px !important;
+  }
+  .alarm-info {
+    height: 140px !important;
+  }
+  .neon {
+    font-size: 40px;
+  }
+  // 모바일에서 close 버튼을 왼쪽으로 이동
+  .icon-small-close {
+    left: 8px !important;
+    right: auto !important;
+    color: #fff !important;
+  }
+}

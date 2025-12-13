@@ -1,0 +1,43 @@
+{
+  "editor.formatOnSave": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "editor.rulers": [80, 100],
+  "rest-client.previewOption": "exchange",
+  "indentRainbow.ignoreErrorLanguages": ["*"],
+  "indentRainbow.colorOnWhiteSpaceOnly": true,
+  "gitlens.blame.format": "${message|50?} ${agoOrDate|13-}",
+  "remote.autoForwardPorts": false,
+
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll": "always",
+  //   "source.organizeImports": "always"
+  // }
+  "markdownlint.config": {
+    "MD026": false,
+    "MD009": false,
+    "MD022": false,
+    "MD032": false,
+    "MD012": false,
+    "MD047": false,
+    "MD034": false,
+    "MD010": false,
+    "MD031": false,
+    "MD040": false,
+    "MD058": false,
+    "MD036": false
+  },
+  "rust-analyzer.files.excludeDirs": [
+    "**/.git/**",
+    "**/.next/**",
+    "**/out/**",
+    "**/target/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/*.generated.rs",
+    "/bnsdoc/**",
+    "/bnsweb/**"
+  ],
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false
+}

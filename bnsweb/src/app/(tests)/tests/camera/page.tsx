@@ -1,0 +1,294 @@
+'use client';
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+
+import { useMounted } from '@/hooks/useMounted';
+import { useRefCtx } from '@/hooks/useRefCtx';
+import { useScriptJSMpeg } from '@/hooks/useScript';
+import { IfTbCamera, TbCamera } from '@/models/tb_camera';
+import { IfGateCmdReq, IfTbGate, TbGate } from '@/models/gate/tb_gate';
+import { gconf } from '@/utils/gconf';
+import { Box, Button, styled } from '@mui/material';
+import axios from 'axios';
+import clsx from 'clsx';
+import 'ol/ol.css';
+import { useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
+import { getDynamicPort } from '@/utils/host-util';
+
+declare const JSMpeg: any;
+export default function Main() {
+  useEffect(() => {}, []);
+  const mounted = useMounted();
+  //const doneScript = useScript('/scripts/jsmpeg.min.js', 'jsmpeg.min.js');
+  const doneScript = useScriptJSMpeg();
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  const { data: list } = useSWR<IfTbCamera[]>(['/api/camera/list']);
+  const { data: gates } = useSWR<IfTbGate[]>(['/api/gate/list']);
+  const [sel, setSel] = useState<IfTbCamera>(new TbCamera());
+  const [filter, setFilter] = useState('');
+  const [gate, setGate] = useState<IfTbGate>(new TbGate());
+  const [hide, setHide] = useState(false);
+  //const [player, setPlayer] = useState<any>();
+  useEffect(() => {
+    if (!doneScript || !mounted) return;
+    if (!sel?.cam_ip) return;
+    //if (!sel?.cam_url) return;
+    //if (!sel.cam_url.startsWith('rtsp://')) return;
+
+    console.log('doneScript', doneScript, 'mounted', mounted);
+    const parent = ref.current;
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('id', 'canvasID');
+    parent?.appendChild(canvas);
+
+    console.log('parent', parent);
+    console.log('NEXT_PUBLIC_WS_PORT', process.env.NEXT_PUBLIC_WS_PORT);
+    const wsport = getDynamicPort(Number(process.env.NEXT_PUBLIC_WS_PORT));
+    const url = 'ws://' + document.location.hostname + ':' + wsport + '/' + sel.cam_seq;
+    console.log('url', url);
+    setHide(false);
+    const player = new JSMpeg.Player(url, {
+      canvas: canvas,
+      disableGl: true,
+      onPlay: (_play) => {
+        setHide(true);
+      },
+    });
+    //setPlayer(player);
+
+    return () => {
+      player.destroy();
+      parent?.removeChild(canvas);
+    };
+  }, [mounted, doneScript, sel?.cam_seq, sel?.cam_ip]);
+
+  const handleClickControl = (ele: IfTbGate, cmd: IfGateCmdReq['gate_cmd'], msg?: string) => {
+    if (!ele.gate_seq) {
+      addLog('게이트를 선택하여 주세요');
+      return;
+    }
+    addLog(cmd + ' Clicked.');
+    gateCmd(ele, cmd, msg);
+  };
+
+  const gateCmd = (ele: IfTbGate, cmd: IfGateCmdReq['gate_cmd'], msg?: string) => {
+    const req = {
+      gate_seq: ele.gate_seq,
+      gate_cmd: cmd,
+      msg: msg,
+    };
+    addLog('요청 : ' + JSON.stringify(req));
+    axios
+      .post('/api/gate/control', req, { timeout: gconf.gateControlTimeoutMs })
+      .then((res) => {
+        console.log('res data is ', res.data);
+        addLog('응답 : ' + JSON.stringify(res.data));
+      })
+      .catch((e) => {
+        console.error('E', e);
+        addLog('에러 : ' + e.message);
+      });
+  };
+
+  const [log, setLog] = useState<string[]>([]);
+  const ctx = useRefCtx({
+    log,
+  });
+
+  const addLog = (s: string) => {
+    const msg = '[' + new Date().toLocaleTimeString() + '] ' + s;
+    setLog([msg, ...(ctx.current?.log || [])].slice(0, 100));
+  };
+
+  const [column, setColumn] = useState(false);
+
+  return (
+    <main>
+      <Body>
+        <div className='left'>
+          <div
+            css={css`
+              display: flex;
+              align-items: center;
+              & h2 {
+                font-size: large;
+                font-weight: 600;
+              }
+            `}
+          >
+            <h2>카메라테스트</h2>
+            &nbsp;
+            <Button onClick={() => setSel(new TbCamera())}>UN Select</Button>
+            <Button onClick={() => setColumn(!column)}>{column ? '가로' : '세로'}</Button>
+          </div>
+          <div style={{ maxHeight: '400px', overflowY: 'auto', width: '100%' }}>
+            {list?.map((ele) => (
+              <div
+                key={ele.cam_seq}
+                onClick={() => setSel(ele)}
+                className={ele.cam_seq === sel.cam_seq ? 'bg-yellow-300 text-black' : undefined}
+              >
+                {ele.cam_seq} : {ele.cam_nm}, URL : {ele.cam_ip}:{ele.cam_port}
+                {ele.cam_path_s} {ele.cam_path_l}
+              </div>
+            ))}
+          </div>
+          <div style={{ position: 'relative', width: 500, height: 500 }} ref={ref}>
+            <div
+              css={css`
+                &.play:after {
+                  width: 100%;
+                  height: 100%;
+                  content: ' ';
+                  background-color: aqua;
+                  background-image: url(/images/logo-on.png);
+                  left: 0;
+                  top: 0;
+                  border: 1px solid blue;
+                  position: absolute;
+                }
+              `}
+              className={clsx({ play: !hide })}
+            >
+              {/* <canvas
+            style={{ width: "100%", height: "100%", border: "1px solid red" }}
+          ></canvas> */}
+            </div>
+          </div>
+        </div>
+        <Box className='right'>
+          <div
+            css={css`
+              & h2 {
+                font-size: large;
+                font-weight: 600;
+                color: red;
+              }
+            `}
+          >
+            <h2>실제로 명령어가 전송되어 제어가 되므로 주의 하세요.</h2>
+          </div>
+          <div
+            css={css`
+              display: flex;
+              flex-wrap: wrap;
+              align-items: center;
+              & h2 {
+                font-size: large;
+                font-weight: 600;
+              }
+            `}
+          >
+            <h2>차단장비 테스트</h2>
+            &nbsp;
+            <Button
+              onClick={() => {
+                setGate(new TbGate());
+                setLog([]);
+              }}
+            >
+              초기화
+            </Button>
+            <Button
+              onClick={() => {
+                setLog([]);
+              }}
+            >
+              로그 CLEAR
+            </Button>
+            <Button color='success' onClick={() => handleClickControl(gate, 'Up')}>
+              Gate OPEN
+            </Button>
+            <Button color='success' onClick={() => handleClickControl(gate, 'UpAsync')}>
+              Gate OPEN Async
+            </Button>
+            <Button color='error' onClick={() => handleClickControl(gate, 'Down')}>
+              Gate CLOSE
+            </Button>
+            <Button color='error' onClick={() => handleClickControl(gate, 'DownAsync')}>
+              Gate CLOSE Async
+            </Button>
+            <Button color='info' onClick={() => handleClickControl(gate, 'Stat')}>
+              Gate 상태
+            </Button>
+            <Button color='warning' onClick={() => handleClickControl(gate, 'Stop')}>
+              Gate Stop
+            </Button>
+            <Button color='warning' onClick={() => handleClickControl(gate, 'ELock')}>
+              Gate E Lock
+            </Button>
+            <Button color='warning' onClick={() => handleClickControl(gate, 'EUnLock')}>
+              Gate E UnLock
+            </Button>
+            <Button color='warning' onClick={() => handleClickControl(gate, 'Wind', 'On')}>
+              Gate Wind On
+            </Button>
+            <Button color='warning' onClick={() => handleClickControl(gate, 'Wind', 'Off')}>
+              Gate Wind Off
+            </Button>
+          </div>
+          <div>
+            타입 필터 :
+            <input
+              className='border-1 border-gray-300'
+              type='text'
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
+          </div>
+          <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+            {gates
+              ?.filter(
+                (ele) =>
+                  filter
+                    .split(' ')
+                    .filter((ele) => !!ele)
+                    //.map((ele) => ele.trim())
+                    .some((filter) => ele.gate_type == filter) || filter === ''
+              )
+              .map((ele) => (
+                <div
+                  key={ele.gate_seq}
+                  onClick={() => setGate(ele)}
+                  className={
+                    ele.gate_seq === gate.gate_seq ? 'bg-yellow-300 text-black' : undefined
+                  }
+                >
+                  SEQ : {ele.gate_seq}, Type : {ele.gate_type}, Name : {ele.gate_nm}, IP :{' '}
+                  {ele.gate_ip}:{ele.gate_port}
+                </div>
+              ))}
+          </div>
+          <div className='log'>
+            <h2>로그 </h2>
+            {log.map((log, idx) => (
+              <div key={idx}>{log}</div>
+            ))}
+          </div>
+        </Box>
+      </Body>
+    </main>
+  );
+}
+
+const Body = styled(Box)`
+  & .left {
+    width: 50%;
+  }
+  & .right {
+    width: 50%;
+    word-break: break-all;
+  }
+  display: flex;
+  & .MuiButton-root.MuiButtonBase-root {
+    margin: 2px;
+  }
+  & .log > h2 {
+    font-size: large;
+    font-weight: 600;
+    margin: 5px 0;
+  }
+`;

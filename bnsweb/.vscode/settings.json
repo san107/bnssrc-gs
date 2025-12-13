@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "editor.rulers": [80, 100],
+  "rest-client.previewOption": "exchange",
+  "indentRainbow.ignoreErrorLanguages": ["*"],
+  "indentRainbow.colorOnWhiteSpaceOnly": true // false is the default
+
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll": "always",
+  //   "source.organizeImports": "always"
+  // }
+}

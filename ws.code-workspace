@@ -1,0 +1,25 @@
+{
+  "folders": [
+    {
+      "path": "bnssvr"
+    },
+    {
+      "path": "bnsweb"
+    },
+    {
+      "path": "migration"
+    },
+    {
+      "path": "seed"
+    },
+    {
+      "path": "bnsdoc"
+    }
+  ],
+  "settings": {
+    "indentRainbow.ignoreErrorLanguages": ["*"],
+    "indentRainbow.colorOnWhiteSpaceOnly": true,
+    "gitlens.blame.format": "${message|50?} ${agoOrDate|13-}",
+    "remote.autoForwardPorts": false
+  }
+}

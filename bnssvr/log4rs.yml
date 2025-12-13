@@ -1,0 +1,24 @@
+appenders:
+  stdout:
+    kind: console
+    filters:
+      - kind: threshold
+        # level trace, debug, info, warn, error
+        level: trace
+    encoder:
+      #pattern: "{d(%Y-%m-%d %H:%M:%S %Z)(utc)} - {l}:{m}{n}"
+      #pattern: "[{h({l})}] {d(%H:%M:%S.%3f)} - {h({m})} [{M}:{L}]{n}"
+      #pattern: "[{h({l})}] {d(%H:%M:%S.%3f)} [{M}:{L}] - {h({m})}{n}"
+      #pattern: "{I} [{h({l})}] {d(%H:%M:%S.%3f)} [{M} {L}] - {h({m})}{n}"
+      #pattern: "{i} {d(%H:%M:%S.%3f)} [{h({l:5})}] [{({M}.{L}):35}] {h({m})}{n}"
+      pattern: "{d(%d %H:%M:%S.%3f)} [{h({l:5})}] [{({M}.{L}):35}] {h({m})}{n}"
+
+loggers:
+  bnssvr::gate:
+    level: trace
+  bnssvr::water:
+    level: trace
+
+root:
+  appenders:
+    - stdout

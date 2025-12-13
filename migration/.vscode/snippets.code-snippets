@@ -1,0 +1,14 @@
+{
+  "impcss": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "impcss",
+    "body": "/** @jsxImportSource @emotion/react */\nimport { css } from \"@emotion/react\";\n",
+    "description": "inline css header"
+  },
+  "ednl": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "ednl",
+    "body": "// eslint-disable-next-line",
+    "description": "eslint-disable-next-line"
+  }
+}

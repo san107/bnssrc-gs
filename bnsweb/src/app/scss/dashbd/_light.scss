@@ -1,0 +1,1191 @@
+/*!
+
+=========================================================
+* Black Dashboard - v1.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/black-dashboard
+* Copyright 2019 Creative Tim (https://www.creative-tim.com)
+
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+*/
+
+.dashbd {
+  // light 버전
+  .white-content {
+    background: #f5f6fa;
+  }
+
+  .white-content .navbar.navbar-transparent .navbar-brand {
+    color: #1d253b;
+  }
+
+  .white-content .navbar.navbar-transparent .navbar-toggler-bar {
+    background: #1d253b;
+  }
+
+  .white-content .navbar.navbar-transparent .navbar-nav li a:not(.dropdown-item) {
+    color: #1d253b;
+  }
+
+  .white-content .navbar.navbar-transparent .navbar-nav li a:not(.dropdown-item) i {
+    color: #1d253b;
+  }
+
+  .white-content .navbar.navbar-transparent .navbar-minimize button i {
+    color: #1d253b;
+  }
+
+  .white-content .navbar.navbar-transparent .search-bar.input-group i {
+    color: #1d253b;
+  }
+
+  .white-content .navbar.navbar-transparent .search-bar.input-group .form-control {
+    color: #344675;
+  }
+
+  .white-content .navbar.navbar-transparent .search-bar.input-group .form-control::placeholder {
+    color: #9a9a9a;
+  }
+
+  .white-content .sidebar {
+    box-shadow: 0 2px 22px 0 rgba(0, 0, 0, 0.1), 0 4px 20px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .white-content .sidebar p {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .white-content .main-panel {
+    background: #f5f6fa;
+  }
+
+  .white-content h1,
+  .white-content h2,
+  .white-content h3,
+  .white-content h4,
+  .white-content h5,
+  .white-content h6,
+  .white-content p,
+  .white-content ol li,
+  .white-content ul li,
+  .white-content pre {
+    color: #1d253b;
+  }
+
+  .white-content .font-icon-detail i {
+    color: #222a42;
+  }
+
+  .white-content .btn:not([data-action]):hover {
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .white-content .btn-neutral.btn-link {
+    color: rgba(34, 42, 66, 0.7);
+  }
+
+  .white-content .form-control::-moz-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .white-content .form-control:-moz-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .white-content .form-control::-webkit-input-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .white-content .form-control:-ms-input-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .white-content .has-danger .form-control,
+  .white-content .has-danger .input-group-prepend .input-group-text {
+    border-color: #ec250d;
+  }
+
+  .white-content .input-group-prepend .input-group-text {
+    border-color: rgba(29, 37, 59, 0.5);
+    color: #1d253b;
+  }
+
+  .white-content .form-control {
+    color: #222a42;
+    border-color: rgba(29, 37, 59, 0.5);
+  }
+
+  .white-content .form-control:focus {
+    border-color: #e14eca;
+  }
+
+  .white-content .form-group.no-border .form-control,
+  .white-content .form-group.no-border .form-control + .input-group-prepend .input-group-text,
+  .white-content .form-group.no-border .form-control + .input-group-append .input-group-text,
+  .white-content .form-group.no-border .input-group-prepend .input-group-text,
+  .white-content .form-group.no-border .input-group-append .input-group-text,
+  .white-content .input-group.no-border .form-control,
+  .white-content .input-group.no-border .form-control + .input-group-prepend .input-group-text,
+  .white-content .input-group.no-border .form-control + .input-group-append .input-group-text,
+  .white-content .input-group.no-border .input-group-prepend .input-group-text,
+  .white-content .input-group.no-border .input-group-append .input-group-text {
+    background-color: rgba(222, 222, 222, 0.3);
+  }
+
+  .white-content .form-group.no-border .form-control:focus,
+  .white-content .form-group.no-border .form-control:active,
+  .white-content .form-group.no-border .form-control:active,
+  .white-content .form-group.no-border .form-control + .input-group-prepend .input-group-text:focus,
+  .white-content
+    .form-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .white-content
+    .form-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .white-content .form-group.no-border .form-control + .input-group-append .input-group-text:focus,
+  .white-content .form-group.no-border .form-control + .input-group-append .input-group-text:active,
+  .white-content .form-group.no-border .form-control + .input-group-append .input-group-text:active,
+  .white-content .form-group.no-border .input-group-prepend .input-group-text:focus,
+  .white-content .form-group.no-border .input-group-prepend .input-group-text:active,
+  .white-content .form-group.no-border .input-group-prepend .input-group-text:active,
+  .white-content .form-group.no-border .input-group-append .input-group-text:focus,
+  .white-content .form-group.no-border .input-group-append .input-group-text:active,
+  .white-content .form-group.no-border .input-group-append .input-group-text:active,
+  .white-content .input-group.no-border .form-control:focus,
+  .white-content .input-group.no-border .form-control:active,
+  .white-content .input-group.no-border .form-control:active,
+  .white-content
+    .input-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:focus,
+  .white-content
+    .input-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .white-content
+    .input-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .white-content .input-group.no-border .form-control + .input-group-append .input-group-text:focus,
+  .white-content
+    .input-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:active,
+  .white-content
+    .input-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:active,
+  .white-content .input-group.no-border .input-group-prepend .input-group-text:focus,
+  .white-content .input-group.no-border .input-group-prepend .input-group-text:active,
+  .white-content .input-group.no-border .input-group-prepend .input-group-text:active,
+  .white-content .input-group.no-border .input-group-append .input-group-text:focus,
+  .white-content .input-group.no-border .input-group-append .input-group-text:active,
+  .white-content .input-group.no-border .input-group-append .input-group-text:active {
+    background-color: rgba(222, 222, 222, 0.5);
+  }
+
+  .white-content .form-group.no-border .form-control:focus + .input-group-prepend .input-group-text,
+  .white-content .form-group.no-border .form-control:focus + .input-group-append .input-group-text,
+  .white-content
+    .input-group.no-border
+    .form-control:focus
+    + .input-group-prepend
+    .input-group-text,
+  .white-content
+    .input-group.no-border
+    .form-control:focus
+    + .input-group-append
+    .input-group-text {
+    background-color: transparent;
+  }
+
+  .white-content .input-group[disabled] .input-group-prepend .input-group-text,
+  .white-content .input-group[disabled] .input-group-append .input-group-text {
+    background-color: #222a42;
+  }
+
+  .white-content .form-control[disabled],
+  .white-content .form-control[readonly],
+  .white-content fieldset[disabled] .form-control {
+    background: #e3e3e3;
+    border-color: rgba(29, 37, 59, 0.3);
+  }
+
+  .white-content .input-group-focus .input-group-prepend .input-group-text,
+  .white-content .input-group-focus .input-group-append .input-group-text,
+  .white-content .input-group-focus .form-control {
+    border-color: #e14eca;
+  }
+
+  .white-content .input-group-focus.no-border .input-group-prepend .input-group-text,
+  .white-content .input-group-focus.no-border .input-group-append .input-group-text {
+    background-color: rgba(222, 222, 222, 0.5);
+  }
+
+  .white-content .input-group-prepend .input-group-text {
+    border-right: none;
+  }
+
+  .white-content .input-group-append .input-group-text {
+    border-left: none;
+  }
+
+  .white-content .has-danger .form-control:focus,
+  .white-content .has-success.input-group-focus .input-group-append .input-group-text,
+  .white-content .has-success.input-group-focus .input-group-prepend .input-group-text {
+    border-color: #ec250d;
+  }
+
+  .white-content .has-success .form-control:focus,
+  .white-content .has-success.input-group-focus .input-group-append .input-group-text,
+  .white-content .has-success.input-group-focus .input-group-prepend .input-group-text {
+    border-color: #00bf9a;
+  }
+
+  .white-content .btn.btn-link:hover,
+  .white-content .btn.btn-link:active,
+  .white-content .btn.btn-link:focus {
+    color: #9a9a9a !important;
+  }
+
+  .white-content .btn-group .btn.active {
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .white-content .card:not(.card-white) {
+    background: #ffffff;
+    // box-shadow: 0 1px 15px 0 rgba(, , , 0.05);
+  }
+
+  .white-content .card:not(.card-white) .card-header {
+    color: #222a42;
+  }
+
+  .white-content .card:not(.card-white) .card-header a[data-toggle='collapse'] {
+    color: #222a42;
+  }
+
+  .white-content .card:not(.card-white) .card-header .card-title,
+  .white-content .card:not(.card-white) .card-body .card-title {
+    color: #1d253b;
+  }
+
+  .white-content .card:not(.card-white) .card-body .card-category,
+  .white-content .card:not(.card-white) .card-body .card-description {
+    color: #1d253b;
+  }
+
+  .white-content .card:not(.card-white) label:not(.btn) {
+    color: #344675;
+  }
+
+  .white-content .card:not(.card-white).nav-pills .nav-item .nav-link {
+    color: #444444;
+    background-color: rgba(222, 222, 222, 0.3);
+  }
+
+  .white-content .card:not(.card-white).nav-pills .nav-item .nav-link:not(.active):hover {
+    background: rgba(222, 222, 222, 0.5);
+  }
+
+  .white-content .card:not(.card-white).nav-pills .nav-item .nav-link.active {
+    color: #ffffff;
+  }
+
+  .white-content .card:not(.card-white) .tab-content .tab-pane {
+    color: #444444;
+  }
+
+  .white-content .card:not(.card-white) .card {
+    box-shadow: none;
+  }
+
+  .white-content .card:not(.card-white).card-plain {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .white-content .card:not(.card-white).card-tasks .card-body i {
+    color: rgba(34, 42, 66, 0.7);
+  }
+
+  .white-content .card:not(.card-white).card-tasks .card-body i:hover {
+    color: #222a42;
+  }
+
+  .white-content .table > tbody > tr > td {
+    color: rgba(34, 42, 66, 0.7) !important;
+  }
+
+  .white-content .table > thead > tr > th,
+  .white-content .table > tbody > tr > th,
+  .white-content .table > tfoot > tr > th,
+  .white-content .table > thead > tr > td,
+  .white-content .table > tbody > tr > td,
+  .white-content .table > tfoot > tr > td {
+    border-color: rgba(34, 42, 66, 0.2);
+    padding: 12px 7px;
+    vertical-align: middle;
+  }
+
+  .white-content .table > thead > tr > th,
+  .white-content .table button.btn-neutral.btn-link {
+    color: rgba(34, 42, 66, 0.7);
+  }
+
+  .white-content .footer ul li a {
+    color: #1d253b;
+  }
+
+  .white-content .footer .copyright {
+    color: #1d253b;
+  }
+
+  .white-content .progress-container .progress,
+  .white-content .progress-container.progress.sm .progress {
+    background: rgba(34, 42, 66, 0.1);
+    box-shadow: 0 0 0 3px rgba(34, 42, 66, 0.1);
+  }
+
+  .white-content .progress-container .progress .progress-value,
+  .white-content .progress-container.progress.sm .progress .progress-value {
+    color: #344675;
+  }
+
+  .white-content .progress-container .progress-badge,
+  .white-content .progress-container.progress.sm .progress-badge {
+    color: #1d253b;
+  }
+
+  .white-content .full-page {
+    background: #f5f6fa;
+  }
+
+  .white-content .full-page h1,
+  .white-content .full-page h2,
+  .white-content .full-page h3,
+  .white-content .full-page h4,
+  .white-content .full-page h5,
+  .white-content .full-page h6,
+  .white-content .full-page p,
+  .white-content .full-page ol li,
+  .white-content .full-page ul li,
+  .white-content .full-page pre {
+    color: #1d253b;
+  }
+
+  .white-content .full-page .description {
+    color: #9a9a9a;
+  }
+
+  .white-content .full-page .footer ul li a {
+    color: #1d253b;
+  }
+
+  .white-content .full-page .footer .copyright {
+    color: #1d253b;
+  }
+
+  .white-content .nav-pills .nav-item .nav-link:not(.active) {
+    background: #d3d7e9;
+    color: #1d253b;
+  }
+
+  .white-content .nav-pills .nav-item .nav-link:not(.active):hover {
+    background: #cccccc;
+  }
+
+  .card {
+    background: #27293d;
+    border: 0;
+    position: relative;
+    width: 100%;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 20px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  .card label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .card .card-title {
+    margin-bottom: 0.75rem;
+  }
+
+  .card .card-body {
+    padding: 15px;
+  }
+
+  .card .card-body.table-full-width {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .card .card-body .card-title {
+    color: #ffffff;
+    text-transform: inherit;
+    font-weight: 300;
+    margin-bottom: 0.75rem;
+  }
+
+  .card .card-body .card-description,
+  .card .card-body .card-category {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .card .card-header {
+    padding: 15px 15px 0;
+    border: 0;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .card .card-header:not([data-background-color]) {
+    background-color: transparent;
+  }
+
+  .card .card-header .card-title {
+    color: #ffffff;
+    font-weight: 100;
+  }
+
+  .card .card-header .card-category {
+    color: #9a9a9a;
+    margin-bottom: 5px;
+    font-weight: 300;
+  }
+
+  .card.card-white {
+    background: #ffffff;
+  }
+
+  .card.card-white .card-title {
+    color: #222a42;
+  }
+
+  .card.card-white .card-category,
+  .card.card-white .stats {
+    color: #808080;
+  }
+
+  .card.card-white .form-control::-moz-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .card.card-white .form-control:-moz-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .card.card-white .form-control::-webkit-input-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .card.card-white .form-control:-ms-input-placeholder {
+    color: rgba(34, 42, 66, 0.4);
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+
+  .card.card-white .has-danger .form-control,
+  .card.card-white .has-danger .input-group-prepend .input-group-text {
+    border-color: #ec250d;
+  }
+
+  .card.card-white .input-group-prepend .input-group-text {
+    border-color: rgba(29, 37, 59, 0.2);
+    color: #1d253b;
+  }
+
+  .card.card-white .form-control {
+    color: #222a42;
+    border-color: rgba(29, 37, 59, 0.2);
+  }
+
+  .card.card-white .form-control:focus {
+    border-color: #e14eca;
+  }
+
+  .card.card-white label:not(.btn) {
+    color: #344675;
+  }
+
+  .card.card-white .form-group.no-border .form-control,
+  .card.card-white .form-group.no-border .form-control + .input-group-prepend .input-group-text,
+  .card.card-white .form-group.no-border .form-control + .input-group-append .input-group-text,
+  .card.card-white .form-group.no-border .input-group-prepend .input-group-text,
+  .card.card-white .form-group.no-border .input-group-append .input-group-text,
+  .card.card-white .input-group.no-border .form-control,
+  .card.card-white .input-group.no-border .form-control + .input-group-prepend .input-group-text,
+  .card.card-white .input-group.no-border .form-control + .input-group-append .input-group-text,
+  .card.card-white .input-group.no-border .input-group-prepend .input-group-text,
+  .card.card-white .input-group.no-border .input-group-append .input-group-text {
+    background-color: rgba(222, 222, 222, 0.3);
+  }
+
+  .card.card-white .form-group.no-border .form-control:focus,
+  .card.card-white .form-group.no-border .form-control:active,
+  .card.card-white .form-group.no-border .form-control:active,
+  .card.card-white
+    .form-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:focus,
+  .card.card-white
+    .form-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .card.card-white
+    .form-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .card.card-white
+    .form-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:focus,
+  .card.card-white
+    .form-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:active,
+  .card.card-white
+    .form-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:active,
+  .card.card-white .form-group.no-border .input-group-prepend .input-group-text:focus,
+  .card.card-white .form-group.no-border .input-group-prepend .input-group-text:active,
+  .card.card-white .form-group.no-border .input-group-prepend .input-group-text:active,
+  .card.card-white .form-group.no-border .input-group-append .input-group-text:focus,
+  .card.card-white .form-group.no-border .input-group-append .input-group-text:active,
+  .card.card-white .form-group.no-border .input-group-append .input-group-text:active,
+  .card.card-white .input-group.no-border .form-control:focus,
+  .card.card-white .input-group.no-border .form-control:active,
+  .card.card-white .input-group.no-border .form-control:active,
+  .card.card-white
+    .input-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:focus,
+  .card.card-white
+    .input-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .card.card-white
+    .input-group.no-border
+    .form-control
+    + .input-group-prepend
+    .input-group-text:active,
+  .card.card-white
+    .input-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:focus,
+  .card.card-white
+    .input-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:active,
+  .card.card-white
+    .input-group.no-border
+    .form-control
+    + .input-group-append
+    .input-group-text:active,
+  .card.card-white .input-group.no-border .input-group-prepend .input-group-text:focus,
+  .card.card-white .input-group.no-border .input-group-prepend .input-group-text:active,
+  .card.card-white .input-group.no-border .input-group-prepend .input-group-text:active,
+  .card.card-white .input-group.no-border .input-group-append .input-group-text:focus,
+  .card.card-white .input-group.no-border .input-group-append .input-group-text:active,
+  .card.card-white .input-group.no-border .input-group-append .input-group-text:active {
+    background-color: rgba(222, 222, 222, 0.5);
+  }
+
+  .card.card-white
+    .form-group.no-border
+    .form-control:focus
+    + .input-group-prepend
+    .input-group-text,
+  .card.card-white
+    .form-group.no-border
+    .form-control:focus
+    + .input-group-append
+    .input-group-text,
+  .card.card-white
+    .input-group.no-border
+    .form-control:focus
+    + .input-group-prepend
+    .input-group-text,
+  .card.card-white
+    .input-group.no-border
+    .form-control:focus
+    + .input-group-append
+    .input-group-text {
+    background-color: transparent;
+  }
+
+  .card.card-white .input-group[disabled] .input-group-prepend .input-group-text,
+  .card.card-white .input-group[disabled] .input-group-append .input-group-text {
+    background-color: #222a42;
+  }
+
+  .card.card-white .form-control[disabled],
+  .card.card-white .form-control[readonly],
+  .card.card-white fieldset[disabled] .form-control {
+    background: #e3e3e3;
+    border-color: rgba(29, 37, 59, 0.3);
+  }
+
+  .card.card-white .input-group-focus .input-group-prepend .input-group-text,
+  .card.card-white .input-group-focus .input-group-append .input-group-text,
+  .card.card-white .input-group-focus .form-control {
+    background-color: #ffffff;
+    border-color: #e14eca;
+  }
+
+  .card.card-white .input-group-focus.no-border .input-group-prepend .input-group-text,
+  .card.card-white .input-group-focus.no-border .input-group-append .input-group-text {
+    background-color: rgba(222, 222, 222, 0.5);
+  }
+
+  .card.card-white .input-group-prepend .input-group-text {
+    border-right: none;
+  }
+
+  .card.card-white .input-group-append .input-group-text {
+    border-left: none;
+  }
+
+  .card.card-white .has-danger .form-control:focus,
+  .card.card-white .has-success.input-group-focus .input-group-append .input-group-text,
+  .card.card-white .has-success.input-group-focus .input-group-prepend .input-group-text {
+    border-color: #ec250d;
+  }
+
+  .card.card-white .has-success .form-control:focus,
+  .card.card-white .has-success.input-group-focus .input-group-append .input-group-text,
+  .card.card-white .has-success.input-group-focus .input-group-prepend .input-group-text {
+    border-color: #00bf9a;
+  }
+
+  .white-content .card .card-header .card-category {
+    color: #1e1e1f;
+    margin-bottom: 5px;
+  }
+
+  .white-content .card .card-header .card-title {
+    color: #19191d !important;
+    font-weight: 400;
+  }
+
+  .white-content .card .card-header .card-category2 {
+    margin-bottom: 5px;
+    text-align: center;
+    font-size: 14px;
+    color: #242323 !important;
+  }
+
+  .white-content .card .card-header .card-count {
+    font-size: 28px;
+    color: #575656;
+    cursor: pointer;
+  }
+
+  // color 설정
+  $card-user-author-color1-light: rgba(5, 62, 250, 0.5);
+  $card-user-author-color2-light: rgba(233, 3, 198, 0.6);
+  $card-user-author-color3-light: rgba(248, 49, 4, 0.5);
+
+  .white-content .card-user .author .block.block-one {
+    background: $card-user-author-color1-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(150deg);
+    -moz-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    -o-transform: rotate(150deg);
+    transform: rotate(150deg);
+    margin-top: -90px;
+    margin-left: -50px;
+  }
+
+  .white-content .card-user .author .block.block-two {
+    background: $card-user-author-color1-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(30deg);
+    -moz-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    -o-transform: rotate(30deg);
+    transform: rotate(30deg);
+    margin-top: -40px;
+    margin-left: -100px;
+  }
+
+  .white-content .card-user .author .block.block-three {
+    background: $card-user-author-color1-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(170deg);
+    -moz-transform: rotate(170deg);
+    -ms-transform: rotate(170deg);
+    -o-transform: rotate(170deg);
+    transform: rotate(170deg);
+    margin-top: -70px;
+    right: -45px;
+  }
+
+  .white-content .card-user .author .block.block-four {
+    background: $card-user-author-color1-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color1-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(150deg);
+    -moz-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    -o-transform: rotate(150deg);
+    transform: rotate(150deg);
+    margin-top: -25px;
+    right: -45px;
+  }
+
+  .white-content .card-user .author2 .block.block-one {
+    background: $card-user-author-color2-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(150deg);
+    -moz-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    -o-transform: rotate(150deg);
+    transform: rotate(150deg);
+    margin-top: -90px;
+    margin-left: -50px;
+  }
+
+  .white-content .card-user .author2 .block.block-two {
+    background: $card-user-author-color2-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(30deg);
+    -moz-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    -o-transform: rotate(30deg);
+    transform: rotate(30deg);
+    margin-top: -40px;
+    margin-left: -100px;
+  }
+
+  .white-content .card-user .author2 .block.block-three {
+    background: $card-user-author-color2-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(170deg);
+    -moz-transform: rotate(170deg);
+    -ms-transform: rotate(170deg);
+    -o-transform: rotate(170deg);
+    transform: rotate(170deg);
+    margin-top: -70px;
+    right: -45px;
+  }
+
+  .white-content .card-user .author2 .block.block-four {
+    background: $card-user-author-color2-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color2-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(150deg);
+    -moz-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    -o-transform: rotate(150deg);
+    transform: rotate(150deg);
+    margin-top: -25px;
+    right: -45px;
+  }
+
+  .white-content .card-user .author3 .block.block-one {
+    background: $card-user-author-color3-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(150deg);
+    -moz-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    -o-transform: rotate(150deg);
+    transform: rotate(150deg);
+    margin-top: -90px;
+    margin-left: -50px;
+  }
+
+  .white-content .card-user .author3 .block.block-two {
+    background: $card-user-author-color3-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(30deg);
+    -moz-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    -o-transform: rotate(30deg);
+    transform: rotate(30deg);
+    margin-top: -40px;
+    margin-left: -100px;
+  }
+
+  .white-content .card-user .author3 .block.block-three {
+    background: $card-user-author-color3-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(170deg);
+    -moz-transform: rotate(170deg);
+    -ms-transform: rotate(170deg);
+    -o-transform: rotate(170deg);
+    transform: rotate(170deg);
+    margin-top: -70px;
+    right: -45px;
+  }
+
+  .white-content .card-user .author3 .block.block-four {
+    background: $card-user-author-color3-light;
+    background: -webkit-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -o-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: -moz-linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    background: linear-gradient(
+      to right,
+      $card-user-author-color3-light 0%,
+      rgba(225, 78, 202, 0) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
+    -webkit-transform: rotate(150deg);
+    -moz-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    -o-transform: rotate(150deg);
+    transform: rotate(150deg);
+    margin-top: -25px;
+    right: -45px;
+  }
+
+  $card-user-description-color1-light: #1b6be4;
+  $card-user-description-color2-light: #d01ee4;
+  $card-user-description-color3-light: #ec6f09;
+
+  .white-content .card-user .card-description {
+    margin-top: 30px;
+    text-align: center;
+    color: $card-user-description-color1-light !important;
+    font-size: 20px;
+  }
+
+  .white-content .card-user .card-description2 {
+    margin-top: 30px;
+    text-align: center;
+    color: $card-user-description-color2-light !important;
+    font-size: 20px;
+  }
+
+  .white-content .card-user .card-description3 {
+    margin-top: 30px;
+    text-align: center;
+    color: $card-user-description-color3-light !important;
+    font-size: 20px;
+  }
+
+  .card.card-plain {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .card .image {
+    overflow: hidden;
+    height: 200px;
+    position: relative;
+  }
+
+  .card .avatar {
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-bottom: 15px;
+  }
+
+  .card label {
+    font-size: 0.75rem;
+    margin-bottom: 5px;
+  }
+
+  .card .card-footer {
+    background-color: transparent;
+    border: 0;
+    padding: 15px;
+  }
+
+  .card .card-footer .stats i {
+    margin-right: 5px;
+    position: relative;
+  }
+
+  .card .card-footer h6 {
+    margin-bottom: 0;
+    padding: 7px 0;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .card.card-chart .card-header .btn-group-toggle .tim-icons {
+      font-size: 0.875rem;
+      top: -1px;
+    }
+  }
+
+  /*# sourceMappingURL=dashboard-free.css.map */
+}

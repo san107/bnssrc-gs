@@ -1,0 +1,107 @@
+use super::pkt;
+use crate::{
+  entities::tb_gate,
+  fln,
+  gate_app::{
+    gate::{
+      self,
+      hngsk::{pkt::get_hngsk_clear_cmd, util::get_cmd_timeout_secs},
+    },
+    tx_gate,
+    util::{send_cmd_res_all, send_cmd_res_changed},
+    GateCmd, GateCmdGateDown,
+  },
+  models::cd::{DoGateCmdRslt, GateCmdRsltType, GateStatus},
+  GateCtx,
+};
+use tokio::time::{self, Instant};
+use tokio_modbus::client::Context;
+
+/**
+ * down command.
+ */
+pub async fn do_cmd_down(
+  ctx: &GateCtx,
+  model: &tb_gate::Model,
+  modbus: &mut Context,
+  cmd: &GateCmd,
+) -> anyhow::Result<DoGateCmdRslt> {
+  //
+  let modbuscmd = pkt::get_hngsk_down_cmd();
+  let modbuscmd = vec![modbuscmd];
+
+  let addr = super::super::util::get_gate_addr(&model.gate_no);
+  log::debug!("[HNGSK] addr is {addr} cmd {modbuscmd:?}");
+
+  let rslt = gate::sock::do_write_multiple_registers(modbus, addr, &modbuscmd).await;
+  if let Err(e) = rslt {
+    //실패.
+    let msg = format!("[HNGSK] modbus write errro {e:?}");
+    log::error!("{msg}");
+    let rslt = GateCmdRsltType::Fail;
+    let stat = GateStatus::Na;
+    send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+    return Err(anyhow::anyhow!(fln!(msg)));
+  }
+
+  // 일단 버튼이 눌리면, 하강 진행중인 것으로 처리.
+  tx_gate::send_gate_cmd(Box::new(GateCmdGateDown {
+    gate_seq: cmd.gate_seq,
+    gate: model.clone(),
+  }))
+  .await;
+
+  crate::util::sleep(2000).await;
+
+  let rslt = gate::sock::do_write_multiple_registers(modbus, addr, &get_hngsk_clear_cmd()).await;
+  if let Err(e) = rslt {
+    //실패.
+    let msg = format!("[HNGSK] modbus write errro {e:?}");
+    log::error!("{msg}");
+    let rslt = GateCmdRsltType::Fail;
+    let stat = GateStatus::Na;
+    send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+    return Err(anyhow::anyhow!(fln!(msg)));
+  }
+
+  log::debug!("[HNGSK] modbus write success... ");
+  // 반복하여 상태를 체크하여, 결과를 얻을 것.
+  let mut interval = time::interval(time::Duration::from_secs(2));
+  log::debug!("[HNGSK] start loop");
+  let now = Instant::now();
+
+  let rlt = loop {
+    interval.tick().await;
+    log::debug!("[HNGSK] start loop body");
+    let (rslt, stat, msg) = super::get_status(ctx, addr, modbus, cmd, false).await;
+    if rslt == GateCmdRsltType::Fail {
+      send_cmd_res_changed(&ctx, model, &cmd, rslt, stat, msg.clone()).await;
+      let msg = format!(
+        "[HNGSK] Fail rslt {rslt} stat {stat} msg {msg} elapsed {} secs",
+        now.elapsed().as_secs()
+      );
+      log::error!("{msg}");
+      break Err(anyhow::anyhow!(fln!(msg)));
+    }
+
+    if stat == GateStatus::DownOk {
+      log::info!(
+        "[HNGSK] DownOk rslt {rslt} stat {stat} msg {msg} elapsed {} secs",
+        now.elapsed().as_secs()
+      );
+      send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+      break Ok(DoGateCmdRslt::Success);
+    }
+
+    if now.elapsed().as_secs() > get_cmd_timeout_secs() {
+      let msg = format!("[HPSYS] timeout elapsed {}", now.elapsed().as_secs());
+      log::error!("{msg}");
+      let rslt = GateCmdRsltType::Fail;
+      let stat = GateStatus::Na;
+      send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+      break Err(anyhow::anyhow!(fln!(msg)));
+    }
+  };
+
+  rlt
+}

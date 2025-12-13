@@ -1,0 +1,55 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+  "name": "bnsweb",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  //"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm"
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "mounts": [
+    {
+      "source": "${localWorkspaceFolder}/.bashrc",
+      "target": "/home/node/.bashrc",
+      "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}/.ssh/id_rsa",
+      "target": "/home/node/.ssh/id_rsa",
+      "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}/.ssh/id_rsa.pub",
+      "target": "/home/node/.ssh/id_rsa.pub",
+      "type": "bind"
+    },
+    {
+      "source": "${localWorkspaceFolder}/known_hosts",
+      "target": "/home/node/.ssh/known_hosts",
+      "type": "bind"
+    }
+  ],
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "yarn install",
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  },
+  "runArgs": ["--name", "bnsweb", "--net", "container:bnssvr"]
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}

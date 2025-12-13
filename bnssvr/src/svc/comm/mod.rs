@@ -1,0 +1,11 @@
+pub mod svc_board;
+pub mod svc_book_mark;
+pub mod svc_file;
+pub mod svc_file_tmp;
+pub mod svc_group;
+pub mod svc_group_el;
+pub mod svc_log;
+pub mod svc_msg;
+pub mod svc_region;
+pub mod svc_sms_solapi;
+pub mod svc_weather;

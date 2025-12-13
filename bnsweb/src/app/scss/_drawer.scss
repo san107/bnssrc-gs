@@ -1,0 +1,262 @@
+/* 카메라 Drawer */
+.camera {
+  width: 400px;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+
+.camera tr:hover {
+  background-color: #ddd;
+}
+
+.camera th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #4c85e9;
+  color: white;
+}
+
+.camera td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+/* 차단기 Drawer */
+.gate {
+  width: 400px;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+
+.gate tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.gate tr:hover {
+  background-color: #ddd;
+}
+
+.gate th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #4c85e9;
+  color: white;
+}
+
+.gate td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.gateA {
+  width: 400px;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+
+.gateA tr:hover {
+  background-color: #ddd;
+}
+
+.gateA td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.gateC {
+  width: 100%;
+  // max-width: 500px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.gateC tr:hover {
+  background-color: #52b4f152;
+}
+
+.gateC th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #293960bd;
+  color: white;
+}
+
+.gateC td {
+  border-bottom: 1px solid #aab3c6;
+  padding: 8px;
+  text-align: center;
+}
+
+.loadctl {
+  color: #065fd4;
+  display: inline-block;
+  position: relative;
+  font-size: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+.loadctl::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  position: absolute;
+  bottom: 10px;
+  right: -5px;
+  box-sizing: border-box;
+  animation: animloader 1s linear infinite;
+}
+
+@keyframes animloader {
+  0% {
+    box-shadow: 10px 0 rgba(255, 255, 255, 0), 20px 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 10px 0 #065fd4, 20px 0 rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 10px 0 #065fd4, 20px 0 #065fd4;
+  }
+}
+
+/* 수위계 Drawer */
+.water {
+  width: 400px;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+
+.water tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.water tr:hover {
+  background-color: #ddd;
+}
+
+.water th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #4c85e9;
+  color: white;
+}
+
+.water td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+/* 차단기, 수위계 한개 이상 카메라 보여줄 곳 */
+.camera-footer {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.camera-footer .video {
+  width: 100%;
+  height: 152px;
+  background: rgb(56, 55, 55);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.camera-footer .label {
+  width: 100%;
+  color: white;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 5px;
+}
+
+.camera-right {
+  margin: 0px auto;
+  float: right;
+}
+
+/* 그룹등록 Noti Form  */
+.form-group-container {
+  position: fixed;
+  width: 400px;
+  height: 200px;
+  z-index: 999;
+  background-color: white;
+  border-radius: 0px 0px 10px 10px;
+  box-shadow: 0 13px 10px -5px rgba(0, 0, 0, 0.2);
+  top: 0;
+  right: -400px;
+  transition: transform 0.3s ease-in-out;
+}
+.form-group-container.show {
+  /* top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); */
+  transform: translateX(-420px);
+}
+.noti-group-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background-color: #4c85e9;
+  font-size: 20px;
+  padding: 5px;
+}
+.icon-close2 {
+  z-index: 9999;
+  display: block;
+  overflow: hidden;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+.icon-close2::before {
+  display: block;
+  content: '✖';
+  color: #fff;
+  margin-top: -15px;
+}
+.icon-close2 {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.icon-close2:hover {
+  color: #a50a05 !important;
+}
+.noti-group-header .icon-close2 {
+  border: 2px solid #fff;
+  border-radius: 50%;
+  line-height: 2.8;
+}
+.noti-group-header .icon-close2:hover {
+  border-color: #4df585;
+}
+.form-group-container .comment {
+  color: #6b6969;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}

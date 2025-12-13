@@ -1,0 +1,5 @@
+{% extends "layout.html.tera" %} {% block content %}
+<div>
+  posts_per_page : {{ posts_per_page }}
+</div>
+{% endblock content %}

@@ -1,0 +1,17 @@
+.group-in-gate {
+  cursor: pointer;
+}
+
+.group-in-gate-item {
+  display: flex;
+  justify-content: right;
+  width: 100%;
+  //   color: #ea5a47;
+  color: #808000;
+  padding: 5px 10px 0 10px;
+  font-size: 14px;
+}
+
+.group-in-gate-item .blank {
+  padding-right: 5px;
+}

@@ -1,0 +1,59 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/rust
+{
+  "name": "bnssvr",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  //"image": "mcr.microsoft.com/devcontainers/rust:1-1-bullseye"
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // Use 'mounts' to make the cargo cache persistent in a Docker Volume.
+  "mounts": [
+    {
+      "source": "${localWorkspaceFolder}/.bashrc",
+      "target": "/home/vscode/.bashrc",
+      "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}/.ssh/id_rsa",
+      "target": "/home/vscode/.ssh/id_rsa",
+      "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}/.ssh/id_rsa.pub",
+      "target": "/home/vscode/.ssh/id_rsa.pub",
+      "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}/.ssh/known_hosts",
+      "target": "/home/vscode/.ssh/known_hosts",
+      "type": "bind"
+    }
+  ],
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {},
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "rustc --version",
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode",
+        "yzhang.markdown-all-in-one",
+        "rust-lang.rust-analyzer"
+      ]
+    }
+  },
+  "runArgs": ["--name", "bnssvr"]
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}

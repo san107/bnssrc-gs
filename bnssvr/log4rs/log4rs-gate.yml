@@ -1,0 +1,45 @@
+appenders:
+  stdout:
+    kind: console
+    filters:
+      - kind: threshold
+        # level trace, debug, info, warn, error, off 
+        level: debug
+    encoder:
+      #pattern: "{d(%Y-%m-%d %H:%M:%S %Z)(utc)} - {l}:{m}{n}"
+      #pattern: "[{h({l})}] {d(%H:%M:%S.%3f)} - {h({m})} [{M}:{L}]{n}"
+      #pattern: "[{h({l})}] {d(%H:%M:%S.%3f)} [{M}:{L}] - {h({m})}{n}"
+      #pattern: "{I} [{h({l})}] {d(%H:%M:%S.%3f)} [{M} {L}] - {h({m})}{n}"
+      #pattern: "{i} {d(%H:%M:%S.%3f)} [{h({l:5})}] [{({M}.{L}):35}] {h({m})}{n}"
+      pattern: "{d(%d %H:%M:%S.%3f)} [{h({l:5})}] [{({M}.{L}):35}] {h({m})}{n}"
+loggers:
+  bnssvr::gate_app:
+    level: debug
+  bnssvr::api::gate:
+    level: debug
+  bnssvr::sock:
+    level: debug
+  bnssvr::util:
+    level: debug
+
+# loggers:
+#   bnssvr::gate:
+#     level: trace
+#   bnssvr::ebrd:
+#     level: trace
+#   bnssvr::ebrd_app:
+#     level: trace
+#   bnssvr::api::ebrd:
+#     level: trace
+#   bnssvr::sock:
+#     level: trace
+#   bnssvr::util:
+#     level: trace
+  
+#   bnssvr::water:
+#     level: warn
+
+root:
+  level: off
+  appenders:
+    - stdout
