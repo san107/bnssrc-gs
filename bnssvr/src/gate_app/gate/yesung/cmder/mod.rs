@@ -30,8 +30,12 @@ pub async fn get_status(
   cmd: &GateCmd,
   skipres: bool,
 ) -> (GateCmdRsltType, GateStatus, String) {
-  //
+  // 현재: Input Register 읽기
   let data = gate::sock::do_read_input_registers(modbus, addr, 1).await;
+
+  // 만약 안 되면 Holding Register로 시도:
+  // let data = gate::sock::do_read_holding_registers(modbus, addr, 1).await;
+
   let cmdmsg = cmd.msg.clone().unwrap_or("".to_owned());
 
   if let Err(e) = data {

@@ -2,34 +2,24 @@ use bitflags::bitflags;
 
 use crate::models::cd::{GateCmdRsltType, GateStatus};
 
-// 프로토콜상에 14251 로 되어 있으나, 실제로는 14250 으로 처리해야 값이 들어옴.
-//pub const BASE_ADDR: u16 = 14250;
-//pub const BASE_ADDR: u16 = 0;
-//pub const READ_ADDR: u16 = 0x30000; // 0x30001 - 1 (Modbus 0-based)
-//pub const WRITE_ADDR: u16 = 0x40000; // 0x40001 - 1
-
-pub const READ_ADDR: u16 = 0; // 30001 = Input Register 주소 0
-pub const WRITE_ADDR: u16 = 0; // 40001 = Holding Register 주소 0
+// 모시 판정 지하차도: M0030 = 주소 30, M0031 = 주소 31
+pub const BASE_READ_ADDR: u16 = 30; // M0030
+pub const BASE_WRITE_ADDR: u16 = 31; // M0031
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct YesungRead:u16{
-        const remote_local = 0b0000_0001;
-        const up = 0b0000_0010;
-        const doing = 0b0000_0100;
-        const down = 0b0000_1000;
-        const fault = 0b0001_0000;
-        const auto = 0b0010_0000;
+        const remote_local = 0b0000_0001;  // Bit 0: 관리동/현장
+        const up_complete  = 0b0000_0010;  // Bit 1: 상승완료
+        const down_complete = 0b0000_0100; // Bit 2: 하강완료
+        const up_doing     = 0b0000_1000;  // Bit 3: 상승 작동중
+        const down_doing   = 0b0001_0000;  // Bit 4: 하강 작동중
     }
 
     pub struct YesungWrite:u16 {
-        const up = 0b0000_0001;
-        const down = 0b0000_0010;
-        const stop = 0b0000_0100;
-        const fault = 0b0000_1000;
-        const auto = 0b0001_0000;
-        const manual = 0b0010_0000;
-        const reset = 0b0100_0000;
+        const up   = 0b0000_0001;  // Bit 0: PC 자동상승
+        const stop = 0b0000_0010;  // Bit 1: PC 자동정지
+        const down = 0b0000_0100;  // Bit 2: PC 자동하강
     }
 }
 
@@ -39,18 +29,24 @@ pub fn get_yesung_stat(data: u16) -> (GateCmdRsltType, GateStatus) {
 
   let remote = data.contains(YesungRead::remote_local);
   let rslt = if remote {
-    GateCmdRsltType::Success
+    GateCmdRsltType::Success // 1 = 관리동 모드
   } else {
-    GateCmdRsltType::ModeErr
+    GateCmdRsltType::ModeErr // 0 = 현장 모드
   };
 
-  if data.contains(YesungRead::up) {
+  // 상승완료 확인
+  if data.contains(YesungRead::up_complete) {
     return (rslt, GateStatus::UpOk);
-  } else if data.contains(YesungRead::down) {
-    return (rslt, GateStatus::DownOk);
-  } else if data.contains(YesungRead::fault) {
-    return (rslt, GateStatus::Fault);
   }
+  // 하강완료 확인
+  else if data.contains(YesungRead::down_complete) {
+    return (rslt, GateStatus::DownOk);
+  }
+  // 작동중 확인
+  else if data.contains(YesungRead::up_doing) || data.contains(YesungRead::down_doing) {
+    return (rslt, GateStatus::Na); // 동작중 상태
+  }
+
   (rslt, GateStatus::Na)
 }
 
@@ -62,46 +58,38 @@ pub fn get_yesung_stat_msg(data: u16) -> String {
   msgs.push(format!(
     "Remote:{}",
     match data.contains(YesungRead::remote_local) {
+      true => "On(관리동)",
+      false => "Off(현장)",
+    }
+  ));
+
+  msgs.push(format!(
+    "UpComplete:{}",
+    match data.contains(YesungRead::up_complete) {
       true => "On",
       false => "Off",
     }
   ));
 
   msgs.push(format!(
-    "Up:{}",
-    match data.contains(YesungRead::up) {
+    "DownComplete:{}",
+    match data.contains(YesungRead::down_complete) {
       true => "On",
       false => "Off",
     }
   ));
 
   msgs.push(format!(
-    "Down:{}",
-    match data.contains(YesungRead::down) {
+    "UpDoing:{}",
+    match data.contains(YesungRead::up_doing) {
       true => "On",
       false => "Off",
     }
   ));
 
   msgs.push(format!(
-    "Doing:{}",
-    match data.contains(YesungRead::doing) {
-      true => "On",
-      false => "Off",
-    }
-  ));
-
-  msgs.push(format!(
-    "Fault:{}",
-    match data.contains(YesungRead::fault) {
-      true => "On",
-      false => "Off",
-    }
-  ));
-
-  msgs.push(format!(
-    "Auto:{}",
-    match data.contains(YesungRead::auto) {
+    "DownDoing:{}",
+    match data.contains(YesungRead::down_doing) {
       true => "On",
       false => "Off",
     }
@@ -134,19 +122,22 @@ pub fn parse(data: u16) -> Vec<String> {
   let data = YesungRead::from_bits_truncate(data);
 
   if data.contains(YesungRead::remote_local) {
-    stats.push("Remote".to_owned());
+    stats.push("Remote(관리동)".to_owned());
+  } else {
+    stats.push("Local(현장)".to_owned());
   }
-  if data.contains(YesungRead::up) {
-    stats.push("Up".to_owned());
+
+  if data.contains(YesungRead::up_complete) {
+    stats.push("UpComplete".to_owned());
   }
-  if data.contains(YesungRead::doing) {
-    stats.push("Doing".to_owned());
+  if data.contains(YesungRead::down_complete) {
+    stats.push("DownComplete".to_owned());
   }
-  if data.contains(YesungRead::down) {
-    stats.push("Down".to_owned());
+  if data.contains(YesungRead::up_doing) {
+    stats.push("UpDoing".to_owned());
   }
-  if data.contains(YesungRead::fault) {
-    stats.push("Error".to_owned());
+  if data.contains(YesungRead::down_doing) {
+    stats.push("DownDoing".to_owned());
   }
 
   stats
