@@ -107,6 +107,7 @@ impl MigrationTrait for Migration {
       [S("GT.Fptech"), S("GT"), S("Fptech"), S("에프피텍"), SEQ()],
       [S("GT.Sysbase"), S("GT"), S("Sysbase"), S("시스템베이스"), SEQ()],
       [S("GT.Realsys"), S("GT"), S("Realsys"), S("리얼시스"), SEQ()],
+      [S("GT.Yesung"), S("GT"), S("Yesung"), S("예성 차단막"), SEQ()],
       // 수위계 타입.
       [S("WT.Istec"), S("WT"), S("Istec"), S("IS Technology"), SEQ()],
       [S("WT.ItgOnoff"), S("WT"), S("ItgOnoff"), S("ITG 접점식"), SEQ()],

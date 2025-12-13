@@ -29,9 +29,14 @@ pub async fn mgr_get_status(ctx: GateCtx, model: tb_gate::Model) {
 
   let mut modbus = modbus.unwrap();
 
-  let addr = super::util::get_gate_addr(&model.gate_no);
+  //let addr = super::util::get_gate_addr(&model.gate_no);
+  //let data = gate::sock::do_read_input_registers(&mut modbus, addr, 1).await;
 
-  let data = gate::sock::do_read_input_registers(&mut modbus, addr, 1).await;
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
+  let data = gate::sock::do_read_input_registers(modbus, read_addr, 1).await;
+
+  let write_addr = super::super::util::get_write_addr(&model.gate_no);
+  gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
 
   if let Err(e) = data {
     let msg = format!("[데몬] read_holding_registers fail {e:?}");

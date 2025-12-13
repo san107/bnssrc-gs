@@ -31,9 +31,10 @@ pub async fn do_cmd_down(
   let modbuscmd = vec![modbuscmd];
 
   let addr = super::super::util::get_gate_addr(&model.gate_no);
+  let write_addr = super::super::util::get_write_addr(&model.gate_no);
   log::debug!("[yesung] addr is {addr} cmd {modbuscmd:?}");
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, addr, &modbuscmd).await;
+  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
   if let Err(e) = rslt {
     //실패.
     let msg = format!("[yesung] modbus write errro {e:?}");
@@ -53,7 +54,7 @@ pub async fn do_cmd_down(
 
   crate::util::sleep(2000).await;
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, addr, &get_yesung_clear_cmd()).await;
+  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &get_yesung_clear_cmd()).await;
   if let Err(e) = rslt {
     //실패.
     let msg = format!("[yesung] modbus write errro {e:?}");

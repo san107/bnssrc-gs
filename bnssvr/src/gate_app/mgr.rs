@@ -1,7 +1,7 @@
 use super::{autogate, itson, GateInfo};
 use crate::{
   entities::tb_gate,
-  gate_app::gate::{doori, fptech, hngsk, hpsys, hpsys_crtn, realsys, sysbase},
+  gate_app::gate::{doori, fptech, hngsk, hpsys, hpsys_crtn, realsys, sysbase, yesung},
   models::cd::GateType,
   svc::gate::svc_gate,
   GateCtx,
@@ -64,6 +64,10 @@ async fn do_stat_cmd(ctx: GateCtx, model: tb_gate::Model, gi: GateInfo) {
         // 리얼시스
         realsys::mgr::mgr_get_status(ctx, model).await;
         //log::error!("[데몬] Realsys not implemented");
+      }
+      GateType::Yesung => {
+        // 예성
+        yesung::mgr::mgr_get_status(ctx, model).await;
       }
     }
   }

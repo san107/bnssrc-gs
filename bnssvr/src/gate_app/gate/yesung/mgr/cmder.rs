@@ -13,7 +13,8 @@ pub async fn mgr_get_status(
   model: &tb_gate::Model,
 ) -> (GateCmdRsltType, GateStatus, String) {
   //
-  let data = gate::sock::do_read_input_registers(modbus, addr, 1).await;
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
+  let data = gate::sock::do_read_input_registers(modbus, read_addr, 1).await;
   if let Err(e) = data {
     let msg = format!("[데몬] read_holding_registers fail {e:?}");
     log::error!("{msg}");

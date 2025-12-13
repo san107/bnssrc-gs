@@ -1,5 +1,5 @@
 use crate::entities::tb_gate;
-use crate::gate_app::gate::{autogate, doori, fptech, hngsk, hpsys, hpsys_crtn, itson, realsys, sysbase};
+use crate::gate_app::gate::{autogate, doori, fptech, hngsk, hpsys, hpsys_crtn, itson, realsys, sysbase, yesung};
 use crate::models::cd::{GateCmdRsltType, GateCmdType, GateStatus, GateType};
 use crate::svc::{self, gate::svc_gate};
 use crate::{ectx, GateCtx};
@@ -79,6 +79,12 @@ async fn spawn_do_cmd(
         // 리얼시스
         realsys::do_cmd(ctx, model, cmd).await
         // log::error!("[GATE] Realsys not implemented");
+        // Ok(DoGateCmdRslt::Success)
+      }
+      Ok(GateType::Yesung) => {
+        // 예성
+        yesung::do_cmd(ctx, model, cmd).await
+        // log::error!("[GATE] Yesung not implemented");
         // Ok(DoGateCmdRslt::Success)
       }
       Err(e) => {
