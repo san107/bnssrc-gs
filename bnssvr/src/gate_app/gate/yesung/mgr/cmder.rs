@@ -38,8 +38,8 @@ pub async fn mgr_get_status(
 
 pub async fn mgr_do_stat(ctx: &GateCtx, model: &tb_gate::Model, modbus: &mut Context) {
   //
-  let addr = super::super::util::get_gate_addr(&model.gate_no);
-  let (rslt, stat, msg) = mgr_get_status(ctx, addr, modbus, model).await;
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
+  let (rslt, stat, msg) = mgr_get_status(ctx, read_addr, modbus, model).await;
   if rslt == GateCmdRsltType::Fail {
     return;
   }
