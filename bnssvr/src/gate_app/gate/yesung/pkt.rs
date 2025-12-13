@@ -5,9 +5,11 @@ use crate::models::cd::{GateCmdRsltType, GateStatus};
 // 프로토콜상에 14251 로 되어 있으나, 실제로는 14250 으로 처리해야 값이 들어옴.
 //pub const BASE_ADDR: u16 = 14250;
 //pub const BASE_ADDR: u16 = 0;
-pub const READ_ADDR: u16 = 0x30000; // 0x30001 - 1 (Modbus 0-based)
-pub const WRITE_ADDR: u16 = 0x40000; // 0x40001 - 1
-                                     //pub const BASE_ADDR: u16 = 14251;
+//pub const READ_ADDR: u16 = 0x30000; // 0x30001 - 1 (Modbus 0-based)
+//pub const WRITE_ADDR: u16 = 0x40000; // 0x40001 - 1
+
+pub const READ_ADDR: u16 = 0; // 30001 = Input Register 주소 0
+pub const WRITE_ADDR: u16 = 0; // 40001 = Holding Register 주소 0
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

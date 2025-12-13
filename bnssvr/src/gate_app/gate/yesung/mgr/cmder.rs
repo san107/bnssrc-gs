@@ -8,7 +8,7 @@ use tokio_modbus::client::Context;
 
 pub async fn mgr_get_status(
   ctx: &GateCtx,
-  addr: u16,
+  _addr: u16,
   modbus: &mut Context,
   model: &tb_gate::Model,
 ) -> (GateCmdRsltType, GateStatus, String) {
