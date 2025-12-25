@@ -113,6 +113,7 @@ impl MigrationTrait for Migration {
       [S("WT.ItgOnoff"), S("WT"), S("ItgOnoff"), S("ITG 접점식"), SEQ()],
       [S("WT.HpOnoff"), S("WT"), S("HpOnoff"), S("HP 접점식"), SEQ()],
       [S("WT.HpAnalog"), S("WT"), S("HpAnalog"), S("HP 초음파"), SEQ()],
+      [S("WT.YesungWg"), S("WT"), S("YesungWg"), S("예성 수위계"), SEQ()],
       // 차단기 상태.
       [S("GS.UpOk"), S("GS"), S("UpOk"), S("열림"), SEQ()],
       [S("GS.UpLock"), S("GS"), S("UpLock"), S("열림"), SEQ()],

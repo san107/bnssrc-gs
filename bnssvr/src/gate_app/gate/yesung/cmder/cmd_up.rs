@@ -25,26 +25,26 @@ pub async fn do_cmd_up(
   let modbuscmd = pkt::get_yesung_up_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let read_addr = super::super::util::get_read_addr(&model.gate_no);
-  let write_addr = super::super::util::get_write_addr(&model.gate_no);
-  log::debug!("[yesung] addr is {read_addr}");
+  let up_addr = super::super::util::get_write_up_addr(&model.gate_no);
+  log::debug!("[yesung] UP addr={}", up_addr);
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
+  // P02에 1 쓰기
+  let rslt = gate::sock::do_write_multiple_registers(modbus, up_addr, &modbuscmd).await;
   if let Err(e) = rslt {
-    //실패.
-    let msg = format!("[yesung] modbus write errro {e:?}");
+    let msg = format!("[yesung] UP write error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
     send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
     return Err(anyhow::anyhow!(fln!(msg)));
   }
+
   crate::util::sleep(2000).await;
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &get_yesung_clear_cmd()).await;
+  // P02에 0 쓰기
+  let rslt = gate::sock::do_write_multiple_registers(modbus, up_addr, &get_yesung_clear_cmd()).await;
   if let Err(e) = rslt {
-    //실패.
-    let msg = format!("[yesung] modbus write errro {e:?}");
+    let msg = format!("[yesung] UP clear error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -52,17 +52,20 @@ pub async fn do_cmd_up(
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 
-  log::debug!("[yesung] modbus write success... ");
-  // 반복하여 상태를 체크하여, 결과를 얻을 것.
+  log::debug!("[yesung] modbus write success...");
+
+  // 상태 확인 루프
   let mut interval = time::interval(time::Duration::from_secs(2));
   log::debug!("[yesung] start loop");
   let now = Instant::now();
+
   let rlt = loop {
     interval.tick().await;
     log::debug!("[yesung] start loop body");
-    let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
+
+    let (rslt, stat, msg) = super::get_status(ctx, 0, modbus, cmd, false).await;
+
     if rslt == GateCmdRsltType::Fail {
-      // 실패의 경우에는 안에서 처리함.
       let msg = format!(
         "[yesung] Fail rslt {rslt} stat {stat} msg {msg} elapsed {} secs",
         now.elapsed().as_secs()
@@ -72,7 +75,6 @@ pub async fn do_cmd_up(
     }
 
     if stat == GateStatus::UpOk {
-      // 성공.
       log::info!(
         "[yesung] UpOk rslt {rslt} stat {stat} msg {msg} elapsed {} secs",
         now.elapsed().as_secs()

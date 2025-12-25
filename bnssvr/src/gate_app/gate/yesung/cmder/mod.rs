@@ -21,25 +21,29 @@ mod cmd_up;
 mod cmd_up_async;
 
 /**
- * 상태가져오기.
+ * 상태가져오기 - 3개 주소를 각각 읽음
  */
 pub async fn get_status(
   ctx: &GateCtx,
-  addr: u16,
+  _addr: u16, // 사용 안 함
   modbus: &mut Context,
   cmd: &GateCmd,
   skipres: bool,
 ) -> (GateCmdRsltType, GateStatus, String) {
-  // 현재: Input Register 읽기
-  let data = gate::sock::do_read_input_registers(modbus, addr, 1).await;
-
-  // 만약 안 되면 Holding Register로 시도:
-  // let data = gate::sock::do_read_holding_registers(modbus, addr, 1).await;
-
   let cmdmsg = cmd.msg.clone().unwrap_or("".to_owned());
 
-  if let Err(e) = data {
-    let msg = format!("[yesung] read_holding_registers fail {e:?}{cmdmsg}");
+  // P00, P08, P09를 각각 읽기
+  let remote_addr = super::util::get_read_remote_addr(&None);
+  let up_ok_addr = super::util::get_read_up_ok_addr(&None);
+  let down_ok_addr = super::util::get_read_down_ok_addr(&None);
+
+  let remote = gate::sock::do_read_input_registers(modbus, remote_addr, 1).await;
+  let up_ok = gate::sock::do_read_input_registers(modbus, up_ok_addr, 1).await;
+  let down_ok = gate::sock::do_read_input_registers(modbus, down_ok_addr, 1).await;
+
+  // 에러 체크
+  if let Err(e) = remote {
+    let msg = format!("[yesung] read P00 fail {e:?}{cmdmsg}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -49,15 +53,19 @@ pub async fn get_status(
     return (rslt, stat, msg);
   }
 
-  let data = data.unwrap();
-  let data = data.get(0).unwrap().clone();
-  let (rslt, stat) = pkt::get_yesung_stat(data);
-  let statmsg = pkt::get_yesung_stat_msg(data);
+  // 값 추출
+  let remote_val = remote.unwrap().get(0).unwrap().clone();
+  let up_ok_val = up_ok.unwrap_or(vec![0]).get(0).unwrap().clone();
+  let down_ok_val = down_ok.unwrap_or(vec![0]).get(0).unwrap().clone();
+
+  let (rslt, stat) = pkt::get_yesung_stat(remote_val, up_ok_val, down_ok_val);
+  let statmsg = pkt::get_yesung_stat_msg(remote_val, up_ok_val, down_ok_val);
+
   log::debug!(
-    "[yesung] addr {} val {} flags {}  {cmdmsg} {statmsg}",
-    addr,
-    data,
-    pkt::parse(data).join(",")
+    "[yesung] P00={} P08={} P09={} {cmdmsg} {statmsg}",
+    remote_val,
+    up_ok_val,
+    down_ok_val
   );
 
   (rslt, stat, statmsg)

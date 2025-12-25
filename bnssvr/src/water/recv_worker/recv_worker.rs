@@ -1,13 +1,20 @@
-use crate::water::recv_worker::{grp_action, grp_stat, hpcrtn, hpcrtn_onoff, istec, itg, types::WaterRecvCmd};
+// bnssvr/src/water/recv_worker/recv_worker.rs
+use crate::water::recv_worker::{
+  grp_action,
+  grp_stat,
+  hpcrtn,
+  hpcrtn_onoff,
+  istec,
+  itg,
+  types::WaterRecvCmd, // yesung 추가
+  yesung,
+};
 use actix_web::web;
 use lazy_static::lazy_static;
 use sea_orm::DbConn;
 use std::sync::Arc;
 use tokio::sync::{mpsc::Sender, Mutex};
 
-/**
- * 수위계 데이터 수신 처리 데몬 시작.
- */
 pub fn start_worker(db: DbConn) {
   tokio::spawn(receiver(db));
 }
@@ -49,18 +56,19 @@ async fn receiver(db: DbConn) {
           onoff1,
           onoff2
         );
-        //tokio::spawn(hp::handle_hp_onoff_event(db, dev_id, onoff));
         tokio::spawn(hpcrtn_onoff::handle_hpcrtn_onoff(db, gate_seq, onoff1, onoff2));
       }
       WaterRecvCmd::HpAnalogEvt(gate_seq, level) => {
         log::info!("receive water hp analog gate_seq {} level {}", gate_seq, level);
-        //tokio::spawn(hp::handle_hp_analog_event(db, dev_id, level));
         tokio::spawn(hpcrtn::handle_hpcrtn(db, gate_seq, level));
       }
+      // 예성 수위계 이벤트 처리 추가
+      WaterRecvCmd::YesungEvt(gate_seq, level) => {
+        log::info!("receive yesung water gate_seq {} level {}", gate_seq, level);
+        tokio::spawn(yesung::handle_yesung(db, gate_seq, level));
+      }
       WaterRecvCmd::GrpCommStat(water_seq, comm_stat) => {
-        // 수위계그룹에 속해있는 수위계가 통신상태 변경시 전송 됨.
         log::info!("receive water grp comm stat water_seq {} comm_stat {}", water_seq, comm_stat);
-        // tokio::spawn(water_grp_lock::handle_grp_comm_stat(db, grp_id, comm_stat));
         tokio::spawn(grp_stat::handle_grp_stat(db, water_seq));
       }
       WaterRecvCmd::GrpWaterStat(water_seq, water_stat) => {

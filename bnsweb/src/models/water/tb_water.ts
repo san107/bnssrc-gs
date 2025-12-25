@@ -1,8 +1,8 @@
 export type WaterStat = 'Unknown' | 'Norm' | 'Attn' | 'Warn' | 'Alert' | 'Crit';
-export type WaterType = 'Istec' | 'ItgOnoff' | 'HpOnoff' | 'HpAnalog';
+export type WaterType = 'Istec' | 'ItgOnoff' | 'HpOnoff' | 'HpAnalog' | 'YesungWg';
 
 //export const WaterOnoffTypes: (WaterType | undefined)[] = ['ItgOnoff', 'HpOnoff'];
-export const WaterDataFromHpTypes: (WaterType | undefined)[] = ['HpOnoff', 'HpAnalog'];
+export const WaterDataFromHpTypes: (WaterType | undefined)[] = ['HpOnoff', 'HpAnalog', 'YesungWg'];
 export class TbWater {
   water_seq?: number;
   water_dev_id?: string;
@@ -24,4 +24,4 @@ export class TbWater {
   grp_id?: string;
 }
 
-export interface IfTbWater extends TbWater {}
+export interface IfTbWater extends TbWater { }

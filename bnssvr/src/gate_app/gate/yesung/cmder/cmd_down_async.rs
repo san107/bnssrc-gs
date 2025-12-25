@@ -14,34 +14,29 @@ use crate::{
 };
 use tokio_modbus::client::Context;
 
-/**
- * down command.
- */
 pub async fn do_cmd_down_async(
   ctx: &GateCtx,
   model: &tb_gate::Model,
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
-  //
   let modbuscmd = pkt::get_yesung_down_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let read_addr = super::super::util::get_read_addr(&model.gate_no);
-  let write_addr = super::super::util::get_write_addr(&model.gate_no);
-  log::debug!("[yesung] addr is {read_addr} cmd {modbuscmd:?}");
+  let down_addr = super::super::util::get_write_down_addr(&model.gate_no);
+  log::debug!("[yesung] DOWN_ASYNC addr={} cmd={:?}", down_addr, modbuscmd);
 
-  let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
-
+  // 먼저 상태 확인
+  let (rslt, stat, msg) = super::get_status(ctx, 0, modbus, cmd, false).await;
   if let GateCmdRsltType::Fail = rslt {
     log::error!("status fail {msg}");
     return Err(eanyhow!(fln!(msg)));
   }
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
+  // P03에 1 쓰기
+  let rslt = gate::sock::do_write_multiple_registers(modbus, down_addr, &modbuscmd).await;
   if let Err(e) = rslt {
-    //실패.
-    let msg = format!("[yesung] modbus write errro {e:?}");
+    let msg = format!("[yesung] DOWN_ASYNC write error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -49,7 +44,7 @@ pub async fn do_cmd_down_async(
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 
-  // 일단 버튼이 눌리면, 하강 진행중인 것으로 처리.
+  // 하강 진행중 처리
   tx_gate::send_gate_cmd(Box::new(GateCmdGateDown {
     gate_seq: cmd.gate_seq,
     gate: model.clone(),
@@ -58,10 +53,10 @@ pub async fn do_cmd_down_async(
 
   crate::util::sleep(2000).await;
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &get_yesung_clear_cmd()).await;
+  // P03에 0 쓰기
+  let rslt = gate::sock::do_write_multiple_registers(modbus, down_addr, &get_yesung_clear_cmd()).await;
   if let Err(e) = rslt {
-    //실패.
-    let msg = format!("[yesung] modbus write errro {e:?}");
+    let msg = format!("[yesung] DOWN_ASYNC clear error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -69,7 +64,7 @@ pub async fn do_cmd_down_async(
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 
-  log::debug!("[yesung] down_async success(seq:{})", model.gate_seq);
+  log::info!("[yesung] down_async success (seq:{})", model.gate_seq);
   send_cmd_res_all(&ctx, &cmd, GateCmdRsltType::Success, stat, String::new()).await;
   Ok(DoGateCmdRslt::Success)
 }

@@ -22,21 +22,20 @@ pub async fn do_cmd_stop(
   let modbuscmd = pkt::get_yesung_stop_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let read_addr = super::super::util::get_read_addr(&model.gate_no);
-  let write_addr = super::super::util::get_write_addr(&model.gate_no);
-  log::debug!("[yesung] addr is {read_addr}");
+  let stop_addr = super::super::util::get_write_stop_addr(&model.gate_no);
+  log::debug!("[yesung] STOP addr={}", stop_addr);
 
-  let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
-
+  // 상태 확인
+  let (rslt, stat, msg) = super::get_status(ctx, 0, modbus, cmd, false).await;
   if let GateCmdRsltType::Fail = rslt {
     log::error!("status fail {msg}");
     return Err(eanyhow!(fln!(msg)));
   }
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
+  // P04에 1 쓰기
+  let rslt = gate::sock::do_write_multiple_registers(modbus, stop_addr, &modbuscmd).await;
   if let Err(e) = rslt {
-    //실패.
-    let msg = format!("[yesung] modbus write errro {e:?}");
+    let msg = format!("[yesung] STOP write error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -46,10 +45,10 @@ pub async fn do_cmd_stop(
 
   crate::util::sleep(2000).await;
 
-  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &get_yesung_clear_cmd()).await;
+  // P04에 0 쓰기
+  let rslt = gate::sock::do_write_multiple_registers(modbus, stop_addr, &get_yesung_clear_cmd()).await;
   if let Err(e) = rslt {
-    //실패.
-    let msg = format!("[yesung] modbus write errro {e:?}");
+    let msg = format!("[yesung] STOP clear error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -57,7 +56,7 @@ pub async fn do_cmd_stop(
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 
-  log::debug!("[yesung] stop success(seq:{})", model.gate_seq);
+  log::info!("[yesung] STOP success (seq:{})", model.gate_seq);
   send_cmd_res_all(&ctx, &cmd, GateCmdRsltType::Success, stat, String::new()).await;
   Ok(DoGateCmdRslt::Success)
 }
