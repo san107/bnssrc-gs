@@ -2,91 +2,145 @@ use bitflags::bitflags;
 
 use crate::models::cd::{GateCmdRsltType, GateStatus};
 
-// 실제 장비 주소 - 각각 독립된 주소!
-pub const READ_REMOTE_ADDR: u16 = 0; // P00: 관리/현장
-pub const READ_UP_OK_ADDR: u16 = 8; // P08: 상승완료
-pub const READ_DOWN_OK_ADDR: u16 = 9; // P09: 하강완료
-
-pub const WRITE_UP_ADDR: u16 = 2; // P02: 상승제어
-pub const WRITE_DOWN_ADDR: u16 = 3; // P03: 하강제어
-pub const WRITE_STOP_ADDR: u16 = 4; // P04: 정지제어
-
-pub const WATER_3CM_ADDR: u16 = 5; // P05: 수위 3cm
-pub const WATER_5CM_ADDR: u16 = 6; // P06: 수위 5cm
+// 모시 판정 지하차도 PDF 사양
+pub const BASE_READ_ADDR: u16 = 30;   // M0030: 상태 읽기
+pub const BASE_WRITE_ADDR: u16 = 31;  // M0031: 제어 쓰기
+pub const WATER_SENSOR_ADDR: u16 = 70; // M0070: 수위센서 (3cm, 5cm)
 pub const WATER_ANALOG_ADDR: u16 = 92; // M0092: 아날로그 수위 (0-30cm)
 
-// 각 주소의 값이 0 또는 1
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-    pub struct YesungValue:u16{
-        const on = 0b0000_0001;  // 값이 1이면 ON
+    pub struct YesungRead:u16{
+        const remote_local = 0b0000_0001;  // Bit 0: 원격/로컬 (1=원격, 0=로컬)
+        const up_complete  = 0b0000_0010;  // Bit 1: 상승완료
+        const down_complete = 0b0000_0100; // Bit 2: 하강완료
+        const up_doing     = 0b0000_1000;  // Bit 3: 상승중
+        const down_doing   = 0b0001_0000;  // Bit 4: 하강중
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct YesungWrite:u16 {
+        const up   = 0b0000_0001;  // Bit 0: PC 상승
+        const stop = 0b0000_0010;  // Bit 1: PC 정지
+        const down = 0b0000_0100;  // Bit 2: PC 하강
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct YesungWaterSensor:u16 {
+        const water_3cm = 0b0000_0001;  // Bit 0: 3cm 수위
+        const water_5cm = 0b0000_0010;  // Bit 1: 5cm 수위
     }
 }
 
-// 3개 주소를 읽어서 상태 판단
-pub fn get_yesung_stat(
-  remote: u16,  // P00 값
-  up_ok: u16,   // P08 값
-  down_ok: u16, // P09 값
-) -> (GateCmdRsltType, GateStatus) {
-  let rslt = if remote == 1 {
-    GateCmdRsltType::Success // 관리동 모드
+pub fn get_yesung_stat(data: u16) -> (GateCmdRsltType, GateStatus) {
+  let data = YesungRead::from_bits_truncate(data);
+
+  let remote = data.contains(YesungRead::remote_local);
+  let rslt = if remote {
+    GateCmdRsltType::Success // 1 = 원격 모드
   } else {
-    GateCmdRsltType::ModeErr // 현장 모드
+    GateCmdRsltType::ModeErr // 0 = 로컬 모드
   };
 
-  if up_ok == 1 {
+  // 상승완료 확인
+  if data.contains(YesungRead::up_complete) {
     return (rslt, GateStatus::UpOk);
-  } else if down_ok == 1 {
+  }
+  // 하강완료 확인
+  else if data.contains(YesungRead::down_complete) {
     return (rslt, GateStatus::DownOk);
+  }
+  // 작동중 확인
+  else if data.contains(YesungRead::up_doing) || data.contains(YesungRead::down_doing) {
+    return (rslt, GateStatus::Na); // 동작중 상태
   }
 
   (rslt, GateStatus::Na)
 }
 
-pub fn get_yesung_stat_msg(remote: u16, up_ok: u16, down_ok: u16) -> String {
+pub fn get_yesung_stat_msg(data: u16) -> String {
+  let data = YesungRead::from_bits_truncate(data);
+
   let mut msgs = vec![];
 
-  msgs.push(format!("Remote:{}", if remote == 1 { "On(관리동)" } else { "Off(현장)" }));
+  msgs.push(format!(
+    "Remote:{}",
+    if data.contains(YesungRead::remote_local) {
+      "On(원격)"
+    } else {
+      "Off(로컬)"
+    }
+  ));
 
-  msgs.push(format!("UpOk:{}", if up_ok == 1 { "On" } else { "Off" }));
+  msgs.push(format!(
+    "UpComplete:{}",
+    if data.contains(YesungRead::up_complete) { "On" } else { "Off" }
+  ));
 
-  msgs.push(format!("DownOk:{}", if down_ok == 1 { "On" } else { "Off" }));
+  msgs.push(format!(
+    "DownComplete:{}",
+    if data.contains(YesungRead::down_complete) { "On" } else { "Off" }
+  ));
+
+  msgs.push(format!(
+    "UpDoing:{}",
+    if data.contains(YesungRead::up_doing) { "On" } else { "Off" }
+  ));
+
+  msgs.push(format!(
+    "DownDoing:{}",
+    if data.contains(YesungRead::down_doing) { "On" } else { "Off" }
+  ));
 
   msgs.join(",")
 }
 
 pub fn get_yesung_down_cmd() -> u16 {
-  1 // P03에 1 쓰기
-}
-
-pub fn get_yesung_up_cmd() -> u16 {
-  1 // P02에 1 쓰기
-}
-
-pub fn get_yesung_stop_cmd() -> u16 {
-  1 // P04에 1 쓰기
+  YesungWrite::down.bits()
 }
 
 pub fn get_yesung_clear_cmd() -> Vec<u16> {
   vec![0]
 }
 
-pub fn parse(remote: u16, up_ok: u16, down_ok: u16) -> Vec<String> {
+pub fn get_yesung_up_cmd() -> u16 {
+  YesungWrite::up.bits()
+}
+
+pub fn get_yesung_stop_cmd() -> u16 {
+  YesungWrite::stop.bits()
+}
+
+pub fn parse(data: u16) -> Vec<String> {
   let mut stats: Vec<String> = vec![];
+  let data = YesungRead::from_bits_truncate(data);
 
-  if remote == 1 {
-    stats.push("Remote(관리동)".to_owned());
+  if data.contains(YesungRead::remote_local) {
+    stats.push("Remote(원격)".to_owned());
   } else {
-    stats.push("Local(현장)".to_owned());
+    stats.push("Local(로컬)".to_owned());
   }
 
-  if up_ok == 1 {
-    stats.push("UpOk".to_owned());
+  if data.contains(YesungRead::up_complete) {
+    stats.push("UpComplete".to_owned());
   }
-  if down_ok == 1 {
-    stats.push("DownOk".to_owned());
+  if data.contains(YesungRead::down_complete) {
+    stats.push("DownComplete".to_owned());
+  }
+  if data.contains(YesungRead::up_doing) {
+    stats.push("UpDoing".to_owned());
+  }
+  if data.contains(YesungRead::down_doing) {
+    stats.push("DownDoing".to_owned());
   }
 
   stats
+}
+
+// 수위센서 파싱
+pub fn parse_water_sensor(data: u16) -> (bool, bool) {
+  let sensor = YesungWaterSensor::from_bits_truncate(data);
+  let water_3cm = sensor.contains(YesungWaterSensor::water_3cm);
+  let water_5cm = sensor.contains(YesungWaterSensor::water_5cm);
+  (water_3cm, water_5cm)
 }

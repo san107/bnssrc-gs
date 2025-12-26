@@ -63,9 +63,18 @@ async fn receiver(db: DbConn) {
         tokio::spawn(hpcrtn::handle_hpcrtn(db, gate_seq, level));
       }
       // 예성 수위계 이벤트 처리 추가
-      WaterRecvCmd::YesungEvt(gate_seq, level) => {
-        log::info!("receive yesung water gate_seq {} level {}", gate_seq, level);
-        tokio::spawn(yesung::handle_yesung(db, gate_seq, level));
+      WaterRecvCmd::YesungOnoffEvt(gate_seq, onoff_3cm, onoff_5cm) => {
+        log::info!(
+          "receive yesung water onoff gate_seq {} 3cm={} 5cm={}",
+          gate_seq,
+          onoff_3cm,
+          onoff_5cm
+        );
+        tokio::spawn(yesung::handle_yesung_onoff(db, gate_seq, onoff_3cm, onoff_5cm));
+      }
+      WaterRecvCmd::YesungAnalogEvt(gate_seq, level) => {
+        log::info!("receive yesung water analog gate_seq {} level {}", gate_seq, level);
+        tokio::spawn(yesung::handle_yesung_analog(db, gate_seq, level));
       }
       WaterRecvCmd::GrpCommStat(water_seq, comm_stat) => {
         log::info!("receive water grp comm stat water_seq {} comm_stat {}", water_seq, comm_stat);

@@ -23,16 +23,17 @@ pub async fn do_cmd_down(
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
+  
   let modbuscmd = pkt::get_yesung_down_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let down_addr = super::super::util::get_write_down_addr(&model.gate_no);
-  log::debug!("[yesung] DOWN addr={} cmd={:?}", down_addr, modbuscmd);
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
+  let write_addr = super::super::util::get_write_addr(&model.gate_no);
+  log::debug!("[yesung] addr is {} cmd {:?}", write_addr, modbuscmd);
 
-  // P03에 1 쓰기
-  let rslt = gate::sock::do_write_multiple_registers(modbus, down_addr, &modbuscmd).await;
+  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
   if let Err(e) = rslt {
-    let msg = format!("[yesung] DOWN write error {e:?}");
+    let msg = format!("[yesung] modbus write error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -40,7 +41,6 @@ pub async fn do_cmd_down(
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 
-  // 하강 진행중 처리
   tx_gate::send_gate_cmd(Box::new(GateCmdGateDown {
     gate_seq: cmd.gate_seq,
     gate: model.clone(),
@@ -49,10 +49,9 @@ pub async fn do_cmd_down(
 
   crate::util::sleep(2000).await;
 
-  // P03에 0 쓰기 (클리어)
-  let rslt = gate::sock::do_write_multiple_registers(modbus, down_addr, &get_yesung_clear_cmd()).await;
+  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &get_yesung_clear_cmd()).await;
   if let Err(e) = rslt {
-    let msg = format!("[yesung] DOWN clear error {e:?}");
+    let msg = format!("[yesung] modbus write error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -61,8 +60,7 @@ pub async fn do_cmd_down(
   }
 
   log::debug!("[yesung] modbus write success...");
-
-  // 상태 확인 루프
+  
   let mut interval = time::interval(time::Duration::from_secs(2));
   log::debug!("[yesung] start loop");
   let now = Instant::now();
@@ -70,9 +68,9 @@ pub async fn do_cmd_down(
   let rlt = loop {
     interval.tick().await;
     log::debug!("[yesung] start loop body");
-
-    let (rslt, stat, msg) = super::get_status(ctx, 0, modbus, cmd, false).await;
-
+    
+    let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
+    
     if rslt == GateCmdRsltType::Fail {
       send_cmd_res_changed(&ctx, model, &cmd, rslt, stat, msg.clone()).await;
       let msg = format!(

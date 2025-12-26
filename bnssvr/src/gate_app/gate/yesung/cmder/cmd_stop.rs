@@ -19,23 +19,23 @@ pub async fn do_cmd_stop(
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
+  
   let modbuscmd = pkt::get_yesung_stop_cmd();
   let modbuscmd = vec![modbuscmd];
 
-  let stop_addr = super::super::util::get_write_stop_addr(&model.gate_no);
-  log::debug!("[yesung] STOP addr={}", stop_addr);
+  let read_addr = super::super::util::get_read_addr(&model.gate_no);
+  let write_addr = super::super::util::get_write_addr(&model.gate_no);
+  log::debug!("[yesung] addr is {}", write_addr);
 
-  // 상태 확인
-  let (rslt, stat, msg) = super::get_status(ctx, 0, modbus, cmd, false).await;
+  let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
   if let GateCmdRsltType::Fail = rslt {
     log::error!("status fail {msg}");
     return Err(eanyhow!(fln!(msg)));
   }
 
-  // P04에 1 쓰기
-  let rslt = gate::sock::do_write_multiple_registers(modbus, stop_addr, &modbuscmd).await;
+  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &modbuscmd).await;
   if let Err(e) = rslt {
-    let msg = format!("[yesung] STOP write error {e:?}");
+    let msg = format!("[yesung] modbus write error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -45,10 +45,9 @@ pub async fn do_cmd_stop(
 
   crate::util::sleep(2000).await;
 
-  // P04에 0 쓰기
-  let rslt = gate::sock::do_write_multiple_registers(modbus, stop_addr, &get_yesung_clear_cmd()).await;
+  let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &get_yesung_clear_cmd()).await;
   if let Err(e) = rslt {
-    let msg = format!("[yesung] STOP clear error {e:?}");
+    let msg = format!("[yesung] modbus write error {e:?}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;

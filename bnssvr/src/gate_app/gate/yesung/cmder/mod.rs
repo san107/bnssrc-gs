@@ -20,30 +20,19 @@ mod cmd_stop;
 mod cmd_up;
 mod cmd_up_async;
 
-/**
- * 상태가져오기 - 3개 주소를 각각 읽음
- */
 pub async fn get_status(
   ctx: &GateCtx,
-  _addr: u16, // 사용 안 함
+  addr: u16,
   modbus: &mut Context,
   cmd: &GateCmd,
   skipres: bool,
 ) -> (GateCmdRsltType, GateStatus, String) {
+  let data = gate::sock::do_read_input_registers(modbus, addr, 1).await;
+
   let cmdmsg = cmd.msg.clone().unwrap_or("".to_owned());
 
-  // P00, P08, P09를 각각 읽기
-  let remote_addr = super::util::get_read_remote_addr(&None);
-  let up_ok_addr = super::util::get_read_up_ok_addr(&None);
-  let down_ok_addr = super::util::get_read_down_ok_addr(&None);
-
-  let remote = gate::sock::do_read_input_registers(modbus, remote_addr, 1).await;
-  let up_ok = gate::sock::do_read_input_registers(modbus, up_ok_addr, 1).await;
-  let down_ok = gate::sock::do_read_input_registers(modbus, down_ok_addr, 1).await;
-
-  // 에러 체크
-  if let Err(e) = remote {
-    let msg = format!("[yesung] read P00 fail {e:?}{cmdmsg}");
+  if let Err(e) = data {
+    let msg = format!("[yesung] read_input_registers fail {e:?}{cmdmsg}");
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
@@ -53,19 +42,16 @@ pub async fn get_status(
     return (rslt, stat, msg);
   }
 
-  // 값 추출
-  let remote_val = remote.unwrap().get(0).unwrap().clone();
-  let up_ok_val = up_ok.unwrap_or(vec![0]).get(0).unwrap().clone();
-  let down_ok_val = down_ok.unwrap_or(vec![0]).get(0).unwrap().clone();
-
-  let (rslt, stat) = pkt::get_yesung_stat(remote_val, up_ok_val, down_ok_val);
-  let statmsg = pkt::get_yesung_stat_msg(remote_val, up_ok_val, down_ok_val);
-
+  let data = data.unwrap();
+  let data = data.get(0).unwrap().clone();
+  let (rslt, stat) = pkt::get_yesung_stat(data);
+  let statmsg = pkt::get_yesung_stat_msg(data);
+  
   log::debug!(
-    "[yesung] P00={} P08={} P09={} {cmdmsg} {statmsg}",
-    remote_val,
-    up_ok_val,
-    down_ok_val
+    "[yesung] addr {} val {} flags {} {cmdmsg} {statmsg}",
+    addr,
+    data,
+    pkt::parse(data).join(",")
   );
 
   (rslt, stat, statmsg)
