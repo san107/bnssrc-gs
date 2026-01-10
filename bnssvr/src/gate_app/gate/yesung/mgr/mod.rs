@@ -61,43 +61,50 @@ pub async fn mgr_get_status(ctx: GateCtx, model: tb_gate::Model) {
 
   // ===== 수위계 데이터 읽기 =====
 
+  log::info!("[데몬] ===== 수위계 데이터 읽기 시작 (seq: {}) =====", seq);
+  
   // 1. 접점식 수위센서 (M0070: 3cm, 5cm)
   let water_sensor_addr = super::util::get_water_sensor_addr(&model.gate_no);
+  log::info!("[데몬] 수위센서 주소 계산: gate_no={:?} → addr={}", model.gate_no, water_sensor_addr);
+  
   let sensor_result = gate::sock::do_read_input_registers(&mut modbus, water_sensor_addr, 1).await;
-
-  if let Ok(sensor_data) = sensor_result {
-    if let Some(sensor_raw) = sensor_data.get(0) {
-      let (water_3cm, water_5cm) = super::pkt::parse_water_sensor(*sensor_raw);
-      log::info!(
-        "[데몬] Yesung water sensors: 3cm={} 5cm={} (seq: {})",
-        water_3cm,
-        water_5cm,
-        seq
-      );
-
-      // 예성 전용 이벤트로 전송
-      send(WaterRecvCmd::YesungOnoffEvt(model.gate_seq, water_3cm, water_5cm)).await;
+  
+  match sensor_result {
+    Ok(sensor_data) => {
+      log::info!("[데몬] 수위센서 읽기 성공: {:?}", sensor_data);
+      if let Some(sensor_raw) = sensor_data.get(0) {
+        let (water_3cm, water_5cm) = super::pkt::parse_water_sensor(*sensor_raw);
+        log::info!("[데몬] Yesung water sensors: 3cm={} 5cm={} raw={} (seq: {})", water_3cm, water_5cm, sensor_raw, seq);
+        send(WaterRecvCmd::YesungOnoffEvt(model.gate_seq, water_3cm, water_5cm)).await;
+      }
+    }
+    Err(e) => {
+      log::error!("[데몬] 수위센서 읽기 실패: {:?} (addr: {})", e, water_sensor_addr);
     }
   }
-
+  
   // 2. 아날로그 수위센서 (M0092: 0-30cm)
   let water_analog_addr = super::util::get_water_analog_addr(&model.gate_no);
+  log::info!("[데몬] 아날로그 주소 계산: gate_no={:?} → addr={}", model.gate_no, water_analog_addr);
+  
   let analog_result = gate::sock::do_read_input_registers(&mut modbus, water_analog_addr, 1).await;
-
-  if let Ok(analog_data) = analog_result {
-    if let Some(level_raw) = analog_data.get(0) {
-      // cm → m 변환! (15cm → 0.15m)
-      let level_cm = *level_raw as f64;
-      let level_m = level_cm / 100.0; // 센티미터를 미터로 변환
-
-      log::info!("[데몬] Yesung water analog: {} cm = {} m (seq: {})", level_cm, level_m, seq);
-
-      // 미터 단위로 전송
-      send(WaterRecvCmd::YesungAnalogEvt(model.gate_seq, level_m)).await;
+  
+  match analog_result {
+    Ok(analog_data) => {
+      log::info!("[데몬] 아날로그 읽기 성공: {:?}", analog_data);
+      if let Some(level_raw) = analog_data.get(0) {
+        let level_cm = *level_raw as f64;
+        let level_m = level_cm / 100.0;
+        log::info!("[데몬] Yesung water analog: {} cm = {} m raw={} (seq: {})", level_cm, level_m, level_raw, seq);
+        send(WaterRecvCmd::YesungAnalogEvt(model.gate_seq, level_m)).await;
+      }
     }
-  } else {
-    log::debug!("[데몬] 아날로그 수위계 읽기 실패 (정상 - 수위계 미설치 가능)");
+    Err(e) => {
+      log::error!("[데몬] 아날로그 읽기 실패: {:?} (addr: {})", e, water_analog_addr);
+    }
   }
+  
+  log::info!("[데몬] ===== 수위계 데이터 읽기 완료 (seq: {}) =====", seq);
 
   // ===== 차단기 상태 처리 =====
   cmder::mgr_do_stat(&ctx, &model, &mut modbus).await;

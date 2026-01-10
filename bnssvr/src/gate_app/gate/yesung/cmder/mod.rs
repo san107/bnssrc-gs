@@ -36,7 +36,9 @@ pub async fn get_status(
     log::error!("{msg}");
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
-    if !skipres {
+    
+    // skipres=false이고 tx_api가 있을 때만 응답 전송
+    if !skipres && cmd.tx_api.is_some() {
       send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
     }
     return (rslt, stat, msg);
