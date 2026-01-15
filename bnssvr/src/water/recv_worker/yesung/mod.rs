@@ -2,7 +2,7 @@ use sea_orm::*;
 
 use crate::{
   entities::tb_water,
-  svc::water::{svc_water_gate, svc_water_hist},
+  svc::water::{svc_water, svc_water_hist},
   water::recv_worker::water_util,
 };
 
@@ -63,8 +63,8 @@ async fn _handle_yesung_onoff(db: &DbConn, gate_seq: i32, onoff_3cm: bool, onoff
     onoff_5cm
   );
 
-  // ⭐ tb_water_gate를 통해 gate_seq에 연결된 3cm 수위계 찾기
-  let waters_3cm = svc_water_gate::qry::Qry::find_water_by_gate_seq(&db, "YesungWg3cm", gate_seq).await?;
+  // 3cm 수위계 찾기
+  let waters_3cm = svc_water::qry::Qry::find_by_water_gate_seq(&db, "YesungWg3cm", gate_seq).await?;
   log::info!("[예성-접점] 📊 3cm 수위계 검색 결과: {}개 (tb_water_gate)", waters_3cm.len());
 
   if waters_3cm.is_empty() {
@@ -89,8 +89,8 @@ async fn _handle_yesung_onoff(db: &DbConn, gate_seq: i32, onoff_3cm: bool, onoff
     }
   }
 
-  // ⭐ tb_water_gate를 통해 gate_seq에 연결된 5cm 수위계 찾기
-  let waters_5cm = svc_water_gate::qry::Qry::find_water_by_gate_seq(&db, "YesungWg5cm", gate_seq).await?;
+  // 5cm 수위계 찾기
+  let waters_5cm = svc_water::qry::Qry::find_by_water_gate_seq(&db, "YesungWg5cm", gate_seq).await?;
   log::info!("[예성-접점] 📊 5cm 수위계 검색 결과: {}개 (tb_water_gate)", waters_5cm.len());
 
   if waters_5cm.is_empty() {
@@ -122,8 +122,8 @@ async fn _handle_yesung_onoff(db: &DbConn, gate_seq: i32, onoff_3cm: bool, onoff
 async fn _handle_yesung_analog(db: &DbConn, gate_seq: i32, level: f64) -> anyhow::Result<()> {
   log::info!("[예성-아날로그] 🔍 gate_seq={} level={}m 처리 시작", gate_seq, level);
 
-  // ⭐ tb_water_gate를 통해 gate_seq에 연결된 아날로그 수위계 찾기
-  let waters = svc_water_gate::qry::Qry::find_water_by_gate_seq(&db, "YesungWgAnalog", gate_seq).await?;
+  // 아날로그 수위계 찾기
+  let waters = svc_water::qry::Qry::find_by_water_gate_seq(&db, "YesungWgAnalog", gate_seq).await?;
   log::info!(
     "[예성-아날로그] 📊 아날로그 수위계 검색 결과: {}개 (tb_water_gate)",
     waters.len()
