@@ -19,7 +19,6 @@ pub async fn do_cmd_up_async(
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
-  
   let modbuscmd = pkt::get_yesung_up_cmd();
   let modbuscmd = vec![modbuscmd];
 
@@ -52,6 +51,12 @@ pub async fn do_cmd_up_async(
     let rslt = GateCmdRsltType::Fail;
     let stat = GateStatus::Na;
     send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+
+    // 비상통화장치 자동 해제 추가
+    if let Err(e) = crate::gate_app::emcall::do_autoup_emcall_grp(&ctx, model.gate_seq).await {
+      log::error!("[AUTOUP] emcall_grp off error {e:?}");
+    }
+
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 

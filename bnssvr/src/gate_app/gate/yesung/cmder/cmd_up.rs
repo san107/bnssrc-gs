@@ -22,7 +22,6 @@ pub async fn do_cmd_up(
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
-  
   let modbuscmd = pkt::get_yesung_up_cmd();
   let modbuscmd = vec![modbuscmd];
 
@@ -39,7 +38,7 @@ pub async fn do_cmd_up(
     send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
     return Err(anyhow::anyhow!(fln!(msg)));
   }
-  
+
   crate::util::sleep(2000).await;
 
   let rslt = gate::sock::do_write_multiple_registers(modbus, write_addr, &get_yesung_clear_cmd()).await;
@@ -53,17 +52,17 @@ pub async fn do_cmd_up(
   }
 
   log::debug!("[yesung] modbus write success...");
-  
+
   let mut interval = time::interval(time::Duration::from_secs(2));
   log::debug!("[yesung] start loop");
   let now = Instant::now();
-  
+
   let rlt = loop {
     interval.tick().await;
     log::debug!("[yesung] start loop body");
-    
+
     let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
-    
+
     if rslt == GateCmdRsltType::Fail {
       let msg = format!(
         "[yesung] Fail rslt {rslt} stat {stat} msg {msg} elapsed {} secs",
@@ -79,6 +78,12 @@ pub async fn do_cmd_up(
         now.elapsed().as_secs()
       );
       send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+
+      // 비상통화장치 자동 해제 추가
+      if let Err(e) = crate::gate_app::emcall::do_autoup_emcall_grp(&ctx, model.gate_seq).await {
+        log::error!("[AUTOUP] emcall_grp off error {e:?}");
+      }
+
       break Ok(DoGateCmdRslt::Success);
     }
 

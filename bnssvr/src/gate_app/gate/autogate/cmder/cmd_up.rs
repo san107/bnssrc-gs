@@ -15,7 +15,7 @@ use tokio::net::TcpStream;
  */
 pub async fn do_cmd_up(
   ctx: &GateCtx,
-  _model: &tb_gate::Model,
+  model: &tb_gate::Model,
   stream: &mut TcpStream,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
@@ -65,6 +65,12 @@ pub async fn do_cmd_up(
     let rslt = GateCmdRsltType::Success;
     let stat = GateStatus::UpLock;
     send_cmd_res_all(ctx, cmd, rslt, stat, "".to_owned()).await;
+
+    // 비상통화장치 자동 해제 추가
+    if let Err(e) = crate::gate_app::emcall::do_autoup_emcall_grp(&ctx, model.gate_seq).await {
+      log::error!("[AUTOUP] emcall_grp off error {e:?}");
+    }
+
     return Ok(DoGateCmdRslt::Success);
   }
   let msg = format!("[AUTOGATE] 처리결과에러 : {res_code:?} {res_msg}");
