@@ -66,6 +66,10 @@ pub async fn do_cmd_up(
     let stat = GateStatus::UpLock;
     send_cmd_res_all(ctx, cmd, rslt, stat, "".to_owned()).await;
 
+    if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
+      log::error!("[AUTOGATE] emcall_grp off error {e:?}");
+    }
+
     return Ok(DoGateCmdRslt::Success);
   }
   let msg = format!("[AUTOGATE] 처리결과에러 : {res_code:?} {res_msg}");
