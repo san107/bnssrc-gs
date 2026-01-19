@@ -23,7 +23,6 @@ pub async fn do_cmd_down(
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
-  
   let modbuscmd = pkt::get_yesung_down_cmd();
   let modbuscmd = vec![modbuscmd];
 
@@ -60,7 +59,7 @@ pub async fn do_cmd_down(
   }
 
   log::debug!("[yesung] modbus write success...");
-  
+
   let mut interval = time::interval(time::Duration::from_secs(2));
   log::debug!("[yesung] start loop");
   let now = Instant::now();
@@ -68,9 +67,9 @@ pub async fn do_cmd_down(
   let rlt = loop {
     interval.tick().await;
     log::debug!("[yesung] start loop body");
-    
+
     let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, false).await;
-    
+
     if rslt == GateCmdRsltType::Fail {
       send_cmd_res_changed(&ctx, model, &cmd, rslt, stat, msg.clone()).await;
       let msg = format!(
@@ -87,6 +86,11 @@ pub async fn do_cmd_down(
         now.elapsed().as_secs()
       );
       send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+
+      if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
+        log::error!("[yesung] emcall_grp off error {e:?}");
+      }
+
       break Ok(DoGateCmdRslt::Success);
     }
 

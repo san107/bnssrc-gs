@@ -52,11 +52,6 @@ pub async fn do_cmd_up_async(
     let stat = GateStatus::Na;
     send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
 
-    // 비상통화장치 자동 해제 추가
-    if let Err(e) = crate::gate_app::emcall::do_autoup_emcall_grp(&ctx, model.gate_seq).await {
-      log::error!("[AUTOUP] emcall_grp off error {e:?}");
-    }
-
     return Err(anyhow::anyhow!(fln!(msg)));
   }
 

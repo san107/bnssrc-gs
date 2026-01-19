@@ -23,7 +23,6 @@ pub async fn do_cmd_autodown(
   modbus: &mut Context,
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
-  
   let cmdmsg = cmd.msg.clone().unwrap_or("".to_owned());
   let modbuscmd = pkt::get_yesung_down_cmd();
   let modbuscmd = vec![modbuscmd];
@@ -39,7 +38,7 @@ pub async fn do_cmd_autodown(
       cmd.cmd_type, cmd.gate_seq, model.gate_nm
     );
     log::error!("{msg}");
-    
+
     // tx_api가 있을 때만 응답 전송
     if cmd.tx_api.is_some() {
       send_cmd_res_all(&ctx, &cmd, GateCmdRsltType::Fail, GateStatus::Na, msg.clone()).await;
@@ -65,7 +64,7 @@ pub async fn do_cmd_autodown(
       cmd.cmd_type, cmd.gate_seq, model.gate_nm
     );
     log::error!("{msg}");
-    
+
     if cmd.tx_api.is_some() {
       send_cmd_res_all(&ctx, &cmd, GateCmdRsltType::Fail, GateStatus::Na, msg.clone()).await;
     }
@@ -74,29 +73,36 @@ pub async fn do_cmd_autodown(
 
   log::info!(
     "[yesung-autodown] command sent successfully {} {} {}",
-    cmd.cmd_type, cmd.gate_seq, model.gate_nm
+    cmd.cmd_type,
+    cmd.gate_seq,
+    model.gate_nm
   );
-  
+
   // === 4단계: 상태 확인 루프 (Modbus 안정화 후) ===
   crate::util::sleep(2000).await; // 추가 대기
-  
+
   let mut interval = time::interval(time::Duration::from_secs(3)); // 2초 → 3초
   let now = Instant::now();
-  
+
   let rlt = loop {
     interval.tick().await;
-    log::debug!("[yesung-autodown] checking status {} {} {}", cmd.cmd_type, cmd.gate_seq, model.gate_nm);
-    
+    log::debug!(
+      "[yesung-autodown] checking status {} {} {}",
+      cmd.cmd_type,
+      cmd.gate_seq,
+      model.gate_nm
+    );
+
     // skipres=true로 설정하여 get_status 내부에서 응답 전송 안 함
     let (rslt, stat, msg) = super::get_status(ctx, read_addr, modbus, cmd, true).await;
-    
+
     if rslt == GateCmdRsltType::Fail {
       let msg = format!(
         "[yesung-autodown] Status check failed {rslt} {stat} {msg}{cmdmsg} elapsed {} secs",
         now.elapsed().as_secs()
       );
       log::error!("{msg}");
-      
+
       // 실패 시에도 tx_api 확인
       if cmd.tx_api.is_some() {
         send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
@@ -110,10 +116,14 @@ pub async fn do_cmd_autodown(
         now.elapsed().as_secs()
       );
       let msg = format!("[yesung-autodown] {msg}{cmdmsg} elapsed {} secs", now.elapsed().as_secs());
-      
+
       // 성공 시에만 응답 전송
       if cmd.tx_api.is_some() {
         send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+
+        if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
+          log::error!("[yesung] emcall_grp off error {e:?}");
+        }
       }
       break Ok(DoGateCmdRslt::Success);
     }
@@ -128,7 +138,7 @@ pub async fn do_cmd_autodown(
         model.gate_nm
       );
       log::error!("{msg}");
-      
+
       if cmd.tx_api.is_some() {
         send_cmd_res_all(&ctx, &cmd, GateCmdRsltType::Fail, GateStatus::Na, msg.clone()).await;
       }

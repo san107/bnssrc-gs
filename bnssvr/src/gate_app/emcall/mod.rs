@@ -105,16 +105,15 @@ pub async fn do_autodown_emcall_grp(ctx: &GateCtx, gate_seq: i32) -> Result<(), 
   Ok(())
 }
 
-// 차단막 해제 시 비상통화장치 자동 해제
-pub async fn do_autoup_emcall_grp(ctx: &GateCtx, gate_seq: i32) -> Result<(), String> {
+// 차단막 닫힘 시 비상통화장치 자동 해제
+pub async fn do_autodown_emcall_off(ctx: &GateCtx, gate_seq: i32) -> Result<(), String> {
   let grps = svc_gate_emcall_grp::qry::Qry::find_emcall_grp_by_gate_seq(&ctx.conn, gate_seq)
     .await
     .map_err(|e| format!("emcall_grp 조회 실패 {e:?}"))?;
 
   for grp in grps {
-    // 비상통화장치 OFF 메시지 송출
     if let Err(e) = send_emcall_off_msg(ctx, &grp).await {
-      log::error!("[AUTOUP] emcall_grp 메시지 전송 실패 {grp:?} {e:?}");
+      log::error!("[AUTODOWN_OFF] emcall_grp 메시지 전송 실패 {grp:?} {e:?}");
     }
   }
 
@@ -122,13 +121,13 @@ pub async fn do_autoup_emcall_grp(ctx: &GateCtx, gate_seq: i32) -> Result<(), St
 }
 
 async fn send_emcall_off_msg(ctx: &GateCtx, grp: &tb_emcall_grp::Model) -> Result<(), String> {
-  // 1. 현재 송출중인 메시지 확인
+  // 1. 현재 상태 확인
   let stat = get_emall_stat(&ctx.conn, grp.emcall_grp_seq).await?;
 
-  // 2. 이미 OFF 상태면 스킵
+  // 2. 이미 OFF면 스킵
   let is_off = stat.light == "Off" && stat.speaker == "Off" && stat.speaker_tts == "Off";
   if is_off {
-    log::info!("[AUTOUP] emcall_grp 이미 OFF 상태 {grp:?}");
+    log::info!("[AUTODOWN_OFF] emcall_grp 이미 OFF 상태 {grp:?}");
     return Ok(());
   }
 
@@ -146,7 +145,7 @@ async fn send_emcall_off_msg(ctx: &GateCtx, grp: &tb_emcall_grp::Model) -> Resul
   let ret = emcall_app::send_emcall_grp_stat(url, stat.clone()).await;
 
   if ret.is_err() {
-    log::error!("[AUTOUP] emcall_grp 메시지 전송 실패 {grp:?} {:?}", ret.as_ref());
+    log::error!("[AUTODOWN_OFF] emcall_grp 메시지 전송 실패 {grp:?} {:?}", ret.as_ref());
   }
 
   save_emcall_grp_stat_hist(ctx, grp, &stat, ret).await?;
