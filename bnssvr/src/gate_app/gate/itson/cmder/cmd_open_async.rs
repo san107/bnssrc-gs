@@ -9,7 +9,11 @@ use crate::models::cd::DoGateCmdRslt;
 use crate::GateCtx;
 use tokio::net::TcpStream;
 
-pub async fn do_cmd_open_async(ctx: &GateCtx, stream: &mut TcpStream, cmd: &GateCmd) -> anyhow::Result<DoGateCmdRslt> {
+pub async fn do_cmd_open_async(
+  ctx: &GateCtx,
+  stream: &mut TcpStream,
+  cmd: &GateCmd
+) -> anyhow::Result<DoGateCmdRslt> {
   // let (cmd_res, status) = super::get_gate_status(ctx, stream, cmd).await;
   // if cmd_res != GateCmdRsltType::Success {
   //   return;

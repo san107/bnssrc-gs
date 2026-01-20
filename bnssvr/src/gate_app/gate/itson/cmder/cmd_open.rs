@@ -10,7 +10,12 @@ use crate::GateCtx;
 use tokio::net::TcpStream;
 use tokio::time::Instant;
 
-pub async fn do_cmd_open(ctx: &GateCtx, stream: &mut TcpStream, cmd: &GateCmd) -> anyhow::Result<DoGateCmdRslt> {
+pub async fn do_cmd_open(
+  ctx: &GateCtx,
+  model: &tb_gate::Model,
+  stream: &mut TcpStream,
+  cmd: &GateCmd
+) -> anyhow::Result<DoGateCmdRslt> {
   let (cmd_res, status, _elock) = super::get_gate_status(ctx, stream, cmd).await;
   if cmd_res != GateCmdRsltType::Success {
     return Err(anyhow::anyhow!(fln!("gate status not success")));
@@ -62,7 +67,7 @@ pub async fn do_cmd_open(ctx: &GateCtx, stream: &mut TcpStream, cmd: &GateCmd) -
       if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
         log::error!("[HPCRTN] emcall_grp off error {e:?}");
       }
-      
+
       return Ok(DoGateCmdRslt::Success);
     }
   }

@@ -210,7 +210,7 @@ pub async fn do_cmd(
   cmd: &GateCmd,
 ) -> anyhow::Result<DoGateCmdRslt> {
   if cmd.cmd_type == GateCmdType::Up {
-    return cmd_open::do_cmd_open(ctx, stream, cmd).await;
+    return cmd_open::do_cmd_open(ctx, model, stream, cmd).await;
   } else if cmd.cmd_type == GateCmdType::UpAsync {
     return cmd_open_async::do_cmd_open_async(ctx, stream, cmd).await;
   } else if cmd.cmd_type == GateCmdType::Down {
