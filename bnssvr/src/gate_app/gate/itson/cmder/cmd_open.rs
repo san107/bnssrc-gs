@@ -1,4 +1,5 @@
 use super::pkt;
+use crate::entities::tb_gate;
 use crate::fln;
 use crate::gate_app::util::send_cmd_res_all;
 use crate::gate_app::util::stream_write_all;
