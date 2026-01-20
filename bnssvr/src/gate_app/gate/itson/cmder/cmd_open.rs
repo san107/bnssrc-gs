@@ -58,6 +58,11 @@ pub async fn do_cmd_open(ctx: &GateCtx, stream: &mut TcpStream, cmd: &GateCmd) -
       let rslt = GateCmdRsltType::Success;
       let stat = GateStatus::UpOk;
       send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
+
+      if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
+        log::error!("[HPCRTN] emcall_grp off error {e:?}");
+      }
+      
       return Ok(DoGateCmdRslt::Success);
     }
   }

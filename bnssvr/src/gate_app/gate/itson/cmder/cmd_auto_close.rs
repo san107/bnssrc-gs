@@ -75,10 +75,6 @@ pub async fn do_cmd_auto_close(
       let rslt = GateCmdRsltType::Success;
       send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
 
-      if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
-        log::error!("[ITNAUTO] emcall_grp off error {e:?}");
-      }
-
       return Ok(DoGateCmdRslt::Success);
     }
   }

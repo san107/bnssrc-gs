@@ -91,12 +91,7 @@ pub async fn do_cmd_down(
         "[HPSYS] DownOk rslt {rslt} stat {stat} msg {msg} elapsed {} secs",
         now.elapsed().as_secs()
       );
-      send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
-
-      // 비상통화장치 자동 해제 추가
-      if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
-        log::error!("[HPSYS] emcall_grp off error {e:?}");
-      }
+      send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;      
 
       break Ok(DoGateCmdRslt::Success);
     }

@@ -88,10 +88,6 @@ pub async fn do_cmd_autodown(
       let msg = format!("[HPCRTN] {msg}{cmdmsg} elapsed {} secs", now.elapsed().as_secs());
       send_cmd_res_all(&ctx, &cmd, rslt, stat, msg.clone()).await;
 
-      if let Err(e) = crate::gate_app::emcall::do_autodown_emcall_off(&ctx, model.gate_seq).await {
-        log::error!("[HPCRTN] emcall_grp off error {e:?}");
-      }
-
       break Ok(DoGateCmdRslt::Success);
     }
 
